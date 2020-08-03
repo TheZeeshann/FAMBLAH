@@ -1,6 +1,8 @@
 package com.socialcodia.famblah.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,13 +30,14 @@ public class MainActivity extends AppCompatActivity {
     private SharedPrefHandler sharedPrefHandler;
     private BottomNavigationView navigationView;
     private ActionBar actionBar;
+    private String storagePermission[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-
+        checkStoragePermission();
         Fragment fragment = new HomeFragment();
         setFragment(fragment);
 
@@ -110,8 +115,40 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigationView);
         sharedPrefHandler = SharedPrefHandler.getInstance(getApplicationContext());
         actionBar = getSupportActionBar();
+        storagePermission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
     }
 
+    private void checkStoragePermission()
+    {
+        boolean result = ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == (PackageManager.PERMISSION_GRANTED);
+        if (!result)
+        {
+            requestStoragePermission();
+        }
+    }
+
+    private void requestStoragePermission()
+    {
+        ActivityCompat.requestPermissions(this,storagePermission,100);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length>0)
+        {
+            boolean storagePermissionAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (storagePermissionAccepted)
+            {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                checkStoragePermission();
+            }
+        }
+    }
 
     private void isLoggedIn()
     {
