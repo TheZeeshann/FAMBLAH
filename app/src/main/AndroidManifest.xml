@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.CommentActivity"></activity>
         <activity android:name=".activity.FeedActivity" />
         <activity android:name=".activity.ProfileActivity" />
         <activity android:name=".activity.EditProfileActivity" />

@@ -33,6 +33,8 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -137,29 +139,69 @@ public class AddFeedFragment extends Fragment {
         {
             Toast.makeText(getContext(), "Please write something, or select an image", Toast.LENGTH_SHORT).show();
         }
-        else
-        {
-            postFeed(content);
-        }
-    }
-
-    private void postFeed(String content)
-    {
-        MultipartBody.Part body = null;
-        if (filePath!=null)
+        else if (filePath!=null)
         {
             File file = new File(getRealPathFromURI(filePath));
             RequestBody requestFile =
                     RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
             // MultipartBody.Part is used to send also the actual file name
-            body =
+            MultipartBody.Part body =
                     MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-
+            postFeedWithImage(content,body);
         }
+        else
+        {
+            postFeed(content);
+        }
+
+    }
+
+    private void postFeed(String content)
+    {
+
         btnPostFeed.setEnabled(false);
         String image = "";
-        Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeed(token,content,body);
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeed(token,content);
+        call.enqueue(new Callback<ResponseDefault>() {
+            @Override
+            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                if (response.isSuccessful())
+                {
+                    Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    inputContent.setText("");
+                    inputFeedImage.setImageBitmap(null);
+                    btnPostFeed.setEnabled(true);
+                }
+                else
+                {
+                    Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    btnPostFeed.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                btnPostFeed.setEnabled(true);
+            }
+        });
+    }
+
+    private RequestBody toRequestBody(String value)
+    {
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"),value);
+        return requestBody;
+    }
+
+    private void postFeedWithImage(String content, MultipartBody.Part body)
+    {
+        Map<String,RequestBody> map = new HashMap<>();
+        Toast.makeText(getContext(), "Posting...", Toast.LENGTH_SHORT).show();
+        btnPostFeed.setEnabled(false);
+        String image = "";
+        map.put("content",toRequestBody(content));
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeedWithImage(token,map,body);
         call.enqueue(new Callback<ResponseDefault>() {
             @Override
             public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
