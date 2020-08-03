@@ -1,4 +1,4 @@
-package com.socialcodia.utils;
+package com.socialcodia.famblah.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

@@ -16,7 +16,7 @@ import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
 import com.socialcodia.famblah.model.ResponseLogin;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
-import com.socialcodia.utils.Utils;
+import com.socialcodia.famblah.utils.Utils;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
     {
         if (SharedPrefHandler.getInstance(getApplicationContext()).isLoggedIn())
         {
-//            sendToMainActivity();
+            sendToMainActivity();
         }
     }
 

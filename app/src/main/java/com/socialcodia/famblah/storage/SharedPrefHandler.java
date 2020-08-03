@@ -41,7 +41,7 @@ public class SharedPrefHandler {
         editor.apply();
     }
 
-    public void getUser()
+    public ModelUser getUser()
     {
         sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
         ModelUser user = new ModelUser(
@@ -55,6 +55,7 @@ public class SharedPrefHandler {
                 sharedPreferences.getString(Constants.USER_IMAGE,null),
                 sharedPreferences.getString(Constants.USER_TOKEN,null)
         );
+        return user;
     }
 
     public Boolean isLoggedIn()

@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ResponseDefault;
-import com.socialcodia.utils.Utils;
+import com.socialcodia.famblah.utils.Utils;
 
 import retrofit2.Call;
 import retrofit2.Callback;

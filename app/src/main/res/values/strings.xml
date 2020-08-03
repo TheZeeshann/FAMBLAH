@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FAMBLAH</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about">FAMBLAH was launched in june 2019, Which covers india with insight, courage and plenty of local flavour. FAMBLAH became a people\'s favorite app. Its cutting edge formats. FAMBLAH will serve as a trusted guide to the crush of connecting people and ideas around you. With thoughtful analysis and fearless work of our Team, We will track technology state in india and the world and provide a powerful security to connect you to with your friends and family.</string>
+    <string name="about1">With thoughtful analysis and fearless work of our Team, We will track technology state in india and the world and provide a powerful security to connect you to with your friends and family.</string>
 </resources>

@@ -5,6 +5,9 @@ public class ModelUser {
 //    private Boolean friends;
     String name,username,email,bio,image,token;
 
+    public ModelUser() {
+    }
+
     public ModelUser(int id, int feedsCount, int friendsCount, String name, String username, String email, String bio, String image, String token) {
         this.id = id;
         this.feedsCount = feedsCount;

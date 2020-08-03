@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/miAbout"
+        android:title="About Us"
+        app:showAsAction="never"
+        android:orderInCategory="10"
+        />
+
+    <item
+        android:id="@+id/miLogout"
+        android:title="Logout"
+        app:showAsAction="never"
+        android:orderInCategory="10"
+        />
+
+    <item
+        android:id="@+id/miPostFeed"
+        android:title="Post Feed"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_add_circle"
+        android:iconTint="@color/white"
+        android:orderInCategory="10"
+        />
+</menu>
