@@ -1,17 +1,13 @@
-package com.socialcodia.famblah.model;
+package com.socialcodia.famblah.model.response;
 
 import com.socialcodia.famblah.model.ModelComment;
-
-import org.w3c.dom.Comment;
-
-import java.util.List;
 
 public class ResponseComment {
     private Boolean error;
     private String message;
-    private List<ModelComment> comments;
+    private ModelComment comments;
 
-    public ResponseComment(Boolean error, String message, List<ModelComment> comments) {
+    public ResponseComment(Boolean error, String message, ModelComment comments) {
         this.error = error;
         this.message = message;
         this.comments = comments;
@@ -33,11 +29,11 @@ public class ResponseComment {
         this.message = message;
     }
 
-    public List<ModelComment> getComments() {
+    public ModelComment getComments() {
         return comments;
     }
 
-    public void setComments(List<ModelComment> comments) {
+    public void setComments(ModelComment comments) {
         this.comments = comments;
     }
 }

@@ -24,10 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.socialcodia.famblah.R;
+import com.socialcodia.famblah.activity.MainActivity;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
-import com.socialcodia.famblah.model.ResponseDefault;
+import com.socialcodia.famblah.model.response.ResponseDefault;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
+import com.socialcodia.famblah.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -48,7 +50,7 @@ import static android.app.Activity.RESULT_OK;
 public class AddFeedFragment extends Fragment {
 
     private EditText inputContent;
-    private ImageView selectFeedImage,ivFeedImage,inputFeedImage,userProfileImage;
+    private ImageView selectFeedImage,ivFeedImage,inputFeedImage,userProfileImage,feedUserImage;
     private TextView tvFeedContent,tvUserName,tvFeedTimestamp;
     private Button btnPostFeed;
     private CardView cardView;
@@ -60,25 +62,13 @@ public class AddFeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_feed, container, false);
-
-        inputContent = view.findViewById(R.id.inputFeedContent);
-        selectFeedImage = view.findViewById(R.id.selectFeedImage);
-        tvFeedContent = view.findViewById(R.id.tvFeedContent);
-        ivFeedImage = view.findViewById(R.id.ivFeedImage);
-        inputFeedImage = view.findViewById(R.id.inputFeedImage);
-        btnPostFeed = view.findViewById(R.id.btnPostFeed);
-        tvUserName = view.findViewById(R.id.tvUserName);
-        tvFeedTimestamp = view.findViewById(R.id.tvFeedTimestamp);
-        tvFeedContent = view.findViewById(R.id.tvFeedContent);
-        userProfileImage = view.findViewById(R.id.userProfileImage);
-        cardView = view.findViewById(R.id.cardView);
+        init(view);
 
         ModelUser modelUser = SharedPrefHandler.getInstance(getContext()).getUser();
         token = modelUser.getToken();
         tvUserName.setText(modelUser.getName());
         Picasso.get().load(modelUser.getImage()).into(userProfileImage);
-
-
+        Picasso.get().load(modelUser.getImage()).into(feedUserImage);
 
         selectFeedImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +122,22 @@ public class AddFeedFragment extends Fragment {
         return view;
     }
 
+    private void init(View view)
+    {
+        inputContent = view.findViewById(R.id.inputFeedContent);
+        selectFeedImage = view.findViewById(R.id.selectFeedImage);
+        tvFeedContent = view.findViewById(R.id.tvFeedContent);
+        ivFeedImage = view.findViewById(R.id.ivFeedImage);
+        inputFeedImage = view.findViewById(R.id.inputFeedImage);
+        btnPostFeed = view.findViewById(R.id.btnPostFeed);
+        tvUserName = view.findViewById(R.id.tvUserName);
+        tvFeedTimestamp = view.findViewById(R.id.tvFeedTimestamp);
+        tvFeedContent = view.findViewById(R.id.tvFeedContent);
+        userProfileImage = view.findViewById(R.id.userProfileImage);
+        feedUserImage = view.findViewById(R.id.feedUserImage);
+        cardView = view.findViewById(R.id.cardView);
+    }
+
     private void validateData()
     {
         String content = inputContent.getText().toString().trim();
@@ -157,35 +163,45 @@ public class AddFeedFragment extends Fragment {
 
     }
 
+    public void setFragment(Fragment fragment)
+    {
+        ((MainActivity)getActivity()).setFragment(fragment);
+    }
+
     private void postFeed(String content)
     {
+        if (Utils.isNetworkAvailable(getContext()))
+        {
+            btnPostFeed.setEnabled(false);
+            String image = "";
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeed(token,content);
+            call.enqueue(new Callback<ResponseDefault>() {
+                @Override
+                public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                    if (response.isSuccessful())
+                    {
+                        Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        inputContent.setText("");
+                        inputFeedImage.setImageBitmap(null);
+                        btnPostFeed.setEnabled(true);
+                        Fragment fragment = new HomeFragment();
+                        setFragment(fragment);
 
-        btnPostFeed.setEnabled(false);
-        String image = "";
-        Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeed(token,content);
-        call.enqueue(new Callback<ResponseDefault>() {
-            @Override
-            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
-                if (response.isSuccessful())
-                {
-                    Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    inputContent.setText("");
-                    inputFeedImage.setImageBitmap(null);
+                    }
+                    else
+                    {
+                        Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        btnPostFeed.setEnabled(true);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                     btnPostFeed.setEnabled(true);
                 }
-                else
-                {
-                    Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
-                    btnPostFeed.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                btnPostFeed.setEnabled(true);
-            }
-        });
+            });
+        }
     }
 
     private RequestBody toRequestBody(String value)
@@ -196,42 +212,45 @@ public class AddFeedFragment extends Fragment {
 
     private void postFeedWithImage(String content, MultipartBody.Part body)
     {
-        Map<String,RequestBody> map = new HashMap<>();
-        Toast.makeText(getContext(), "Posting...", Toast.LENGTH_SHORT).show();
-        btnPostFeed.setEnabled(false);
-        String image = "";
-        map.put("content",toRequestBody(content));
-        Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeedWithImage(token,map,body);
-        call.enqueue(new Callback<ResponseDefault>() {
-            @Override
-            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
-                if (response.isSuccessful())
-                {
-                    Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    inputContent.setText("");
-                    inputFeedImage.setImageBitmap(null);
-                    btnPostFeed.setEnabled(true);
+        if (Utils.isNetworkAvailable(getContext()))
+        {
+            Map<String,RequestBody> map = new HashMap<>();
+            Toast.makeText(getContext(), "Posting...", Toast.LENGTH_SHORT).show();
+            btnPostFeed.setEnabled(false);
+            String image = "";
+            map.put("content",toRequestBody(content));
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeedWithImage(token,map,body);
+            call.enqueue(new Callback<ResponseDefault>() {
+                @Override
+                public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                    if (response.isSuccessful())
+                    {
+                        Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        inputContent.setText("");
+                        inputFeedImage.setImageBitmap(null);
+                        btnPostFeed.setEnabled(true);
+                        Fragment fragment = new HomeFragment();
+                        setFragment(fragment);
+                    }
+                    else
+                    {
+                        Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        btnPostFeed.setEnabled(true);
+                    }
                 }
-                else
-                {
-                    Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
-                    btnPostFeed.setEnabled(true);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                btnPostFeed.setEnabled(true);
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    btnPostFeed.setEnabled(true);
+                }
+            });
+        }
     }
 
     private void chooseImage()
     {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        intent.setAction(Intent.ACTION_PICK);
-//        intent.setType("image/*");
         startActivityForResult(intent,200);
     }
 

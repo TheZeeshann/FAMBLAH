@@ -1,6 +1,7 @@
 package com.socialcodia.famblah.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.socialcodia.famblah.R;
+import com.socialcodia.famblah.activity.ProfileActivity;
 import com.socialcodia.famblah.model.ModelUser;
 import com.squareup.picasso.Picasso;
 
@@ -44,12 +47,25 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> {
         holder.tvUserName.setText(name);
         holder.tvUserEmail.setText(email);
         try {
-            Picasso.get().load(image).placeholder(R.drawable.undraw_secure_login_pdn4).into(holder.userProfileImage);
+            Picasso.get().load(image).placeholder(R.drawable.user).into(holder.userProfileImage);
         }
         catch (Exception e)
         {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+
+        holder.userRowLayout.setOnClickListener(v -> {
+            sendToProfileActivity(user.getUsername());
+        });
+
+    }
+
+
+    private void sendToProfileActivity(String username)
+    {
+        Intent intent = new Intent(context, ProfileActivity.class);
+        intent.putExtra("IntentUsername",username);
+        context.startActivity(intent);
     }
 
     @Override
@@ -61,12 +77,14 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> {
 
         private TextView tvUserName, tvUserEmail;
         private ImageView userProfileImage;
+        private ConstraintLayout userRowLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvUserEmail = itemView.findViewById(R.id.tvUserEmail);
             userProfileImage = itemView.findViewById(R.id.userProfileImage);
+            userRowLayout = itemView.findViewById(R.id.userRowLayout);
         }
     }
 }

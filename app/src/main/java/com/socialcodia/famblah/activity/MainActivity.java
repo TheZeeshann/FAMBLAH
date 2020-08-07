@@ -17,20 +17,28 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.socialcodia.famblah.R;
+import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.fragment.AboutUsFragment;
 import com.socialcodia.famblah.fragment.AddFeedFragment;
 import com.socialcodia.famblah.fragment.NotificationFragment;
+import com.socialcodia.famblah.fragment.SettingsFragment;
 import com.socialcodia.famblah.fragment.UsersFragment;
+import com.socialcodia.famblah.model.response.ResponseNotificationsCount;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
 import com.socialcodia.famblah.fragment.HomeFragment;
 import com.socialcodia.famblah.fragment.ProfileFragment;
+import com.socialcodia.famblah.utils.Utils;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private SharedPrefHandler sharedPrefHandler;
     private BottomNavigationView navigationView;
     private ActionBar actionBar;
-    private String storagePermission[];
+    private String storagePermission[], token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         checkStoragePermission();
         Fragment fragment = new HomeFragment();
         setFragment(fragment);
+        sharedPrefHandler = SharedPrefHandler.getInstance(getApplicationContext());
+        token = sharedPrefHandler.getUser().getToken();
 
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -74,10 +84,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        isLoggedIn();
+        getNotificationsCount();
     }
 
+
+
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.menu_main,menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -100,6 +116,12 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new AddFeedFragment();
                 setFragment(fragment);
                 actionBar.setTitle("Post Feed");
+                break;
+            case R.id.miSettings:
+                fragment = new SettingsFragment();
+                setFragment(fragment);
+                actionBar.setTitle("Settings");
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -147,6 +169,56 @@ public class MainActivity extends AppCompatActivity {
             {
                 checkStoragePermission();
             }
+        }
+    }
+
+    public void getNotificationsCount()
+    {
+        if (Utils.isNetworkAvailable(getApplicationContext()))
+        {
+            Call<ResponseNotificationsCount> call = ApiClient.getInstance().getApi().getNotificationsCount(token);
+            call.enqueue(new Callback<ResponseNotificationsCount>() {
+                @Override
+                public void onResponse(Call<ResponseNotificationsCount> call, Response<ResponseNotificationsCount> response) {
+                    if (response.isSuccessful())
+                    {
+                        ResponseNotificationsCount responseNotificationsCount = response.body();
+                        if (!responseNotificationsCount.getError())
+                        {
+                            int notificationsCount = responseNotificationsCount.getNotificationsCount();
+                            sharedPrefHandler.saveNotificationsCount(notificationsCount);
+                            setNotificationsBadge();
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(), responseNotificationsCount.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseNotificationsCount> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+    public  void setNotificationsBadge()
+    {
+        int notificationsCount = sharedPrefHandler.getNotificationsCount();
+        if (notificationsCount>0)
+        {
+            navigationView.getOrCreateBadge(R.id.miNotification).setNumber(notificationsCount);
+            navigationView.getOrCreateBadge(R.id.miNotification).setVisible(true);
+        }
+        else
+        {
+            navigationView.getOrCreateBadge(R.id.miNotification).setVisible(false);
         }
     }
 

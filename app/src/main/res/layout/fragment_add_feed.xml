@@ -69,10 +69,10 @@
                         android:src="@drawable/ic_baseline_camera_alt"
                         app:layout_constraintStart_toStartOf="parent" />
 
-                    <Button
+                    <android.widget.Button
                         android:id="@+id/btnPostFeed"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_gravity="right"
                         android:background="@drawable/btn_corner"
                         android:text="Post"

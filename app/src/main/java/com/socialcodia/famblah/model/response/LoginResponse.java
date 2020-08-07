@@ -1,16 +1,16 @@
-package com.socialcodia.famblah.model;
+package com.socialcodia.famblah.model.response;
 
-import java.util.List;
+import com.socialcodia.famblah.model.ModelUser;
 
-public class ResponseUsers {
+public class LoginResponse {
     private Boolean error;
     private String message;
-    private List<ModelUser> users;
+    private ModelUser user;
 
-    public ResponseUsers(Boolean error, String message, List<ModelUser> users) {
+    public LoginResponse(Boolean error, String message, ModelUser user) {
         this.error = error;
         this.message = message;
-        this.users = users;
+        this.user = user;
     }
 
     public Boolean getError() {
@@ -29,11 +29,11 @@ public class ResponseUsers {
         this.message = message;
     }
 
-    public List<ModelUser> getUsers() {
-        return users;
+    public ModelUser getUser() {
+        return user;
     }
 
-    public void setUsers(List<ModelUser> users) {
-        this.users = users;
+    public void setUser(ModelUser user) {
+        this.user = user;
     }
 }

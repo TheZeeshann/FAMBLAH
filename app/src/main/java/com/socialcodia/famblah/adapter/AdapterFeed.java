@@ -4,6 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,18 +25,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.socialcodia.famblah.activity.EditFeedActivity;
 import com.socialcodia.famblah.activity.FeedActivity;
 import com.socialcodia.famblah.activity.ProfileActivity;
 import com.socialcodia.famblah.model.ModelFeed;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
-import com.socialcodia.famblah.model.ModelFeed;
-import com.socialcodia.famblah.model.ResponseDefault;
-import com.socialcodia.famblah.model.ResponseFeed;
+import com.socialcodia.famblah.model.response.ResponseDefault;
+import com.socialcodia.famblah.model.response.ResponseFeed;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
 import com.socialcodia.famblah.fragment.ProfileFragment;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -41,6 +50,8 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
 
     List<ModelFeed> modelFeedList;
     Context context;
+    private String feedContent, feedImage;
+    private ViewHolder holder;
 
 
     public AdapterFeed(List<ModelFeed> modelFeedList, Context context) {
@@ -66,9 +77,10 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         String likeCounts = feed.getFeedLikes().toString();
         String commentCounts = feed.getFeedComments().toString();
         String feedId = feed.getFeedId().toString();
-        String feedImage = feed.getFeedImage();
+        feedImage = feed.getFeedImage();
         String feedUserImage = feed.getUserImage();
         String feedUserId = feed.getUserId().toString();
+        feedContent = feed.getFeedContent();
         Boolean liked = feed.getLiked();
         holder.tvFeedLike.setText(likeCounts+" Likes");
         holder.tvFeedComment.setText(commentCounts+" Comments");
@@ -98,7 +110,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         }
 
         try {
-            Picasso.get().load(feedUserImage).into(holder.userProfileImage);
+            Picasso.get().load(feedUserImage).into(holder.feedUserImage);
         }
         catch (Exception e)
         {
@@ -126,7 +138,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             }
         });
 
-        holder.userProfileImage.setOnClickListener(new View.OnClickListener() {
+        holder.feedUserImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (feedUserId.equals(String.valueOf(SharedPrefHandler.getInstance(context).getUser().getId())))
@@ -140,33 +152,95 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             }
         });
 
-        holder.tvUserName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (feedUserId.equals(String.valueOf(SharedPrefHandler.getInstance(context).getUser().getId())))
-                {
-                    sendToProfileFragment();
-                }
-                else
-                {
-                    sendToProfileActivity(username);
-                }
+        holder.tvUserName.setOnClickListener(v -> {
+            if (feedUserId.equals(String.valueOf(SharedPrefHandler.getInstance(context).getUser().getId())))
+            {
+                sendToProfileFragment();
+            }
+            else
+            {
+                sendToProfileActivity(username);
             }
         });
 
-        holder.tvFeedContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendToFeedActivity(feedId);
-            }
-        });
+        if (!feedContent.isEmpty())
+        {
+            holder.tvFeedContent.setOnClickListener(v -> sendToFeedActivity(feedId));
+        }
+        else
+        {
+            holder.tvFeedContent.setVisibility(View.GONE);
+        }
 
-        holder.tvComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendToFeedActivity(feedId);
+        holder.tvComment.setOnClickListener(v -> sendToFeedActivity(feedId));
+
+        holder.tvShare.setOnClickListener(v -> {
+            if (feedImage.isEmpty())
+            {
+                shareFeed(feedContent);
+            }
+            else
+            {
+                shareFeedWithImage(holder,feedContent);
             }
         });
+    }
+
+    public void shareFeed(String feedContent)
+    {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT,feedContent);
+        intent.setType("text/plain");
+        context.startActivity(Intent.createChooser(intent,"Share Feed Content"));
+    }
+
+    public void shareFeedWithImage(ViewHolder v, String feedContent)
+    {
+        // Get access to bitmap image from view
+        ImageView ivImage = (ImageView) v.ivFeedImage;
+        // Get access to the URI for the bitmap
+        Uri bmpUri = getLocalBitmapUri(ivImage);
+        if (bmpUri != null) {
+            // Construct a ShareIntent with link to image
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+            shareIntent.putExtra(Intent.EXTRA_TEXT,feedContent);
+            shareIntent.setType("image/*");
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+            // Launch sharing dialog for image
+            context.startActivity(Intent.createChooser(shareIntent, "Share Feed"));
+
+        } else {
+
+        }
+    }
+
+    // Returns the URI path to the Bitmap displayed in specified ImageView
+    public Uri getLocalBitmapUri(ImageView imageView) {
+        // Extract Bitmap from ImageView drawable
+        Drawable drawable = imageView.getDrawable();
+        Bitmap bmp = null;
+        if (drawable instanceof BitmapDrawable){
+            bmp = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        } else {
+            return null;
+        }
+        // Store image to default external storage directory
+        Uri bmpUri = null;
+        try {
+            File file =  new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), "famblah_" + System.currentTimeMillis() + ".png");
+            file.getParentFile().mkdirs();
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.close();
+            bmpUri = Uri.fromFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bmpUri;
     }
 
     private void sendToFeedActivity(String feedId)
@@ -190,7 +264,6 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         ((FragmentActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,fragment).commit();
     }
 
-
     private void showFeedActionOptions(ImageView ivFeedOption, String feedId, String userId)
     {
         PopupMenu popupMenu = new PopupMenu(context,ivFeedOption);
@@ -200,13 +273,13 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             popupMenu.getMenu().add(Menu.NONE,0,0,"Edit");
             popupMenu.getMenu().add(Menu.NONE,1,1,"Delete");
         }
-        popupMenu.getMenu().add(Menu.NONE,2,2,"Share");
+        popupMenu.getMenu().add(Menu.NONE,2,2,"Report");
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                     if (id==0){
-                        Toast.makeText(context, "Edit", Toast.LENGTH_SHORT).show();
+                        sendToEditProfileActivity(feedId);
                     }
                     else if (id==1)
                     {
@@ -214,12 +287,50 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
                     }
                     else if (id==2)
                     {
-                        Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show();
+                        showReportDialog(feedId);
                     }
                 return  false;
             }
         });
         popupMenu.show();
+    }
+
+    private void reportFeed(String feedId)
+    {
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().reportFeed(SharedPrefHandler.getInstance(context).getUser().getToken(),Integer.valueOf(feedId));
+        call.enqueue(new Callback<ResponseDefault>() {
+            @Override
+            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                if (response.isSuccessful())
+                {
+                    ResponseDefault ResponseDefault = response.body();
+                    if (!ResponseDefault.getError())
+                    {
+                        Toast.makeText(context, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(context, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+                else
+                {
+                    Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void sendToEditProfileActivity(String feedId)
+    {
+        Intent intent = new Intent(context, EditFeedActivity.class);
+        intent.putExtra("intentFeedId",feedId);
+        context.startActivity(intent);
     }
 
     private boolean showAlertDialog(String feedId)
@@ -233,6 +344,24 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+        return true;
+    }
+
+    private boolean showReportDialog(String feedId)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Report Feed");
+        builder.setMessage("Report this feed if you think this feed is violating our community guidelines, We will investigate and take action on your report ASAP.\nNote:  No one even you also can't seen who's reported this feed.");
+        //Delete Button
+        builder.setPositiveButton("Yes", (dialog, which) -> reportFeed(feedId));
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(context, "Report Cancel", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
@@ -271,7 +400,6 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             }
         });
     }
-
 
     private void doLike(String feedId, String likeCounts,ViewHolder holder)
     {
@@ -342,12 +470,12 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder
     {
 
-        private ImageView userProfileImage,ivFeedImage,ivFeedOption;
+        private ImageView feedUserImage,ivFeedImage,ivFeedOption;
         private TextView tvUserName, tvFeedTimestamp,tvFeedContent,tvFeedLike,tvFeedComment,tvComment,tvLike,tvUnlike,tvShare;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            userProfileImage = itemView.findViewById(R.id.userProfileImage);
+            feedUserImage = itemView.findViewById(R.id.feedUserImage);
             ivFeedImage = itemView.findViewById(R.id.ivFeedImage);
             ivFeedOption = itemView.findViewById(R.id.ivFeedOption);
             tvUserName = itemView.findViewById(R.id.tvUserName);

@@ -1,16 +1,16 @@
-package com.socialcodia.famblah.model;
+package com.socialcodia.famblah.model.response;
 
-import com.socialcodia.famblah.model.ModelUser;
+import com.socialcodia.famblah.model.ModelFeed;
 
-public class LoginResponse {
+public class ResponseFeed {
     private Boolean error;
     private String message;
-    private ModelUser user;
+    private ModelFeed feed;
 
-    public LoginResponse(Boolean error, String message, ModelUser user) {
+    public ResponseFeed(Boolean error, String message, ModelFeed feed) {
         this.error = error;
         this.message = message;
-        this.user = user;
+        this.feed = feed;
     }
 
     public Boolean getError() {
@@ -29,11 +29,11 @@ public class LoginResponse {
         this.message = message;
     }
 
-    public ModelUser getUser() {
-        return user;
+    public ModelFeed getFeed() {
+        return feed;
     }
 
-    public void setUser(ModelUser user) {
-        this.user = user;
+    public void setFeed(ModelFeed feed) {
+        this.feed = feed;
     }
 }

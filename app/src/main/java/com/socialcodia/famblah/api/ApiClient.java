@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-//    private static final String BASE_URL = "http://172.16.0.11/SocialApiFriendsSystem/public/";
+//    private static final String BASE_URL = "http://10.0.2.2/SocialApiFriendsSystem/public/";
         private static final String BASE_URL = "http://famblah.cf/public/";
     private static ApiClient mInstance;
     private Retrofit retrofit;

@@ -7,14 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
-import com.socialcodia.famblah.model.ResponseLogin;
+import com.socialcodia.famblah.model.response.ResponseLogin;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
 import com.socialcodia.famblah.utils.Utils;
 
@@ -28,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword;
     private TextView tvRegister,tvForgotPassword;
     private Button btnLogin;
-    private Switch btnRememberMe;
     private Intent intent;
 
     @Override
@@ -75,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         {
             inputEmail.setText(intent.getStringExtra("intentEmail"));
         }
-        else if (intent.getStringExtra("intentPassword")!=null)
+        if (intent.getStringExtra("intentPassword")!=null)
         {
             inputPassword.setText(intent.getStringExtra("intentPassword"));
         }
@@ -212,6 +210,5 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
-        btnRememberMe = findViewById(R.id.btnRememberMe);
     }
 }

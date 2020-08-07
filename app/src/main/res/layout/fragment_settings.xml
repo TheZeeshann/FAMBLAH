@@ -46,8 +46,24 @@
             android:inputType="textPassword"
             android:padding="13dp" />
 
+        <EditText
+            android:id="@+id/inputConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/text_bg_left"
+            android:drawableLeft="@drawable/ic_baseline_lock"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/blue"
+            android:ems="10"
+            android:hint="New Password"
+            android:inputType="textPassword"
+            android:padding="13dp" />
 
-        <Button
+
+        <android.widget.Button
             android:id="@+id/btnUpdatePassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -11,5 +11,8 @@ public class Constants {
             USER_TOKEN = "token",
             USER_FEEDS_COUNT = "feedsCount",
             USER_FRIENDS_COUNT = "friendsCount",
-            USER_FRIENDSHIP_STATUS = "friendShipStatus";
+            USER_FRIENDSHIP_STATUS = "friendsShipStatus",
+            NOTIFICATIONS_COUNT = "notificationsCount";
 }
+
+

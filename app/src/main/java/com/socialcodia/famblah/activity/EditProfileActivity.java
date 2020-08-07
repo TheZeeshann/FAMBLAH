@@ -3,8 +3,10 @@ package com.socialcodia.famblah.activity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,14 +20,17 @@ import android.widget.Toast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
-import com.socialcodia.famblah.model.ResponseUser;
+import com.socialcodia.famblah.model.response.ResponseUser;
+import com.socialcodia.famblah.storage.Constants;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
+import com.socialcodia.famblah.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Observable;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -49,12 +54,7 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-
-        inputName = findViewById(R.id.inputName);
-        inputUsername = findViewById(R.id.inputUsername);
-        inputBio = findViewById(R.id.inputBio);
-        userProfileImage = findViewById(R.id.userProfileImage);
-        btnUpdateProfile = findViewById(R.id.btnUpdateProfile);
+        init();
 
         actionBar = getSupportActionBar();
         actionBar.setTitle("Edit Profile");
@@ -71,7 +71,7 @@ public class EditProfileActivity extends AppCompatActivity {
         email = user.getEmail();
 
         try {
-            Picasso.get().load(user.getImage()).into(userProfileImage);
+            Picasso.get().load(user.getImage()).placeholder(R.drawable.user).into(userProfileImage);
         }
         catch (Exception e)
         {
@@ -93,6 +93,15 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void init()
+    {
+        inputName = findViewById(R.id.inputName);
+        inputUsername = findViewById(R.id.inputUsername);
+        inputBio = findViewById(R.id.inputBio);
+        userProfileImage = findViewById(R.id.userProfileImage);
+        btnUpdateProfile = findViewById(R.id.btnUpdateProfile);
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -101,9 +110,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void chooseImage()
     {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_PICK);
-        intent.setType("image/*");
+        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent,100);
     }
 
@@ -157,60 +164,132 @@ public class EditProfileActivity extends AppCompatActivity {
         if (bio.isEmpty())
         {
             inputBio.setText("This user is lazy. So they didn't written any bio.");
+            return;
         }
-        updateProfile(name,username,bio);
+        if (filePath==null)
+        {
+            updateProfile(name,username,bio);
+        }
+        else
+        {
+            File file = new File(getRealPathFromURI(filePath));
+            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+            MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("image",file.getName(),requestFile);
+            updateProfileWithImage(name,username,bio,multipartBody);
+        }
+
     }
 
-    private void updateProfile(String name, String username, String bio)
+    private RequestBody toRequestBody(String value)
     {
-        btnUpdateProfile.setEnabled(false);
-        Call<ResponseUser> call = ApiClient.getInstance().getApi().updateUser(token,name,username,bio);
-        call.enqueue(new Callback<ResponseUser>() {
-            @Override
-            public void onResponse(Call<ResponseUser> call, Response<ResponseUser> response) {
-                if (response.isSuccessful())
-                {
-                    ResponseUser responseUser = response.body();
-                    if (!responseUser.getError())
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plane"),value);
+        return requestBody;
+    }
+
+    private void updateProfileWithImage(String name, String username, String bio, MultipartBody.Part multipartBody)
+    {
+        if (Utils.isNetworkAvailable(getApplicationContext()))
+        {
+            btnUpdateProfile.setEnabled(false);
+            Map<String,RequestBody> map = new HashMap<>();
+            map.put(Constants.USER_USERNAME,toRequestBody(username));
+            map.put(Constants.USER_NAME,toRequestBody(name));
+            map.put(Constants.USER_BIO,toRequestBody(bio));
+
+            Call<ResponseUser> call = ApiClient.getInstance().getApi().updateUserWithImage(token,map,multipartBody);
+            call.enqueue(new Callback<ResponseUser>() {
+                @Override
+                public void onResponse(Call<ResponseUser> call, Response<ResponseUser> response) {
+                    if (response.isSuccessful())
                     {
-                        btnUpdateProfile.setEnabled(true);
-                        Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
-                        ModelUser modelUser = new ModelUser();
-                        modelUser.setName(name);
-                        modelUser.setUsername(username);
-                        modelUser.setBio(bio);
-                        modelUser.setToken(token);
-                        SharedPrefHandler.getInstance(getApplicationContext()).saveUser(modelUser);
-                        onBackPressed();
+                        ResponseUser responseUser = response.body();
+                        if (!responseUser.getError())
+                        {
+                            btnUpdateProfile.setEnabled(true);
+                            ModelUser user = new ModelUser();
+                            user.setBio(bio);
+                            user.setUsername(username);
+                            user.setName(name);
+                            user.setToken(token);
+                            SharedPrefHandler.getInstance(getApplicationContext()).saveUser(user);
+                            onBackPressed();
+                        }
+                        else
+                        {
+                            btnUpdateProfile.setEnabled(true);
+                            Toast.makeText(EditProfileActivity.this, responseUser.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else
                     {
                         btnUpdateProfile.setEnabled(true);
-                        Toast.makeText(EditProfileActivity.this, responseUser.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
                     }
                 }
-                else
-                {
-                     btnUpdateProfile.setEnabled(true);
-                    Toast.makeText(EditProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+
+                @Override
+                public void onFailure(Call<ResponseUser> call, Throwable t) {
+
                 }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseUser> call, Throwable t) {
-                btnUpdateProfile.setEnabled(true);
-                Toast.makeText(EditProfileActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        }
     }
 
-    public void uploadImage(File file) {
-        // create multipart
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+    private void updateProfile(String name, String username, String bio)
+    {
+        if (Utils.isNetworkAvailable(getApplicationContext()))
+        {
+            btnUpdateProfile.setEnabled(false);
+            Call<ResponseUser> call = ApiClient.getInstance().getApi().updateUser(token,name,username,bio);
+            call.enqueue(new Callback<ResponseUser>() {
+                @Override
+                public void onResponse(Call<ResponseUser> call, Response<ResponseUser> response) {
+                    if (response.isSuccessful())
+                    {
+                        ResponseUser responseUser = response.body();
+                        if (!responseUser.getError())
+                        {
+                            btnUpdateProfile.setEnabled(true);
+                            Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                            ModelUser modelUser = new ModelUser();
+                            modelUser.setName(name);
+                            modelUser.setUsername(username);
+                            modelUser.setBio(bio);
+                            modelUser.setToken(token);
+                            SharedPrefHandler.getInstance(getApplicationContext()).saveUser(modelUser);
+                            onBackPressed();
+                        }
+                        else
+                        {
+                            btnUpdateProfile.setEnabled(true);
+                            Toast.makeText(EditProfileActivity.this, responseUser.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else
+                    {
+                        btnUpdateProfile.setEnabled(true);
+                        Toast.makeText(EditProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    }
+                }
 
-
-
-
+                @Override
+                public void onFailure(Call<ResponseUser> call, Throwable t) {
+                    btnUpdateProfile.setEnabled(true);
+                    Toast.makeText(EditProfileActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        CursorLoader loader = new CursorLoader(getApplicationContext(), contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_index);
+        cursor.close();
+        return result;
+    }
+
 }

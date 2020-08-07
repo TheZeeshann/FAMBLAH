@@ -1,4 +1,4 @@
-package com.socialcodia.famblah.model;
+package com.socialcodia.famblah.model.response;
 
 import com.socialcodia.famblah.model.ModelFeed;
 

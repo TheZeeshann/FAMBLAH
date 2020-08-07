@@ -1,16 +1,12 @@
-package com.socialcodia.famblah.model;
+package com.socialcodia.famblah.model.response;
 
-import com.socialcodia.famblah.model.ModelFeed;
-
-public class ResponseFeed {
+public class ResponseDefault {
     private Boolean error;
     private String message;
-    private ModelFeed feed;
 
-    public ResponseFeed(Boolean error, String message, ModelFeed feed) {
+    public ResponseDefault(Boolean error, String message) {
         this.error = error;
         this.message = message;
-        this.feed = feed;
     }
 
     public Boolean getError() {
@@ -27,13 +23,5 @@ public class ResponseFeed {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public ModelFeed getFeed() {
-        return feed;
-    }
-
-    public void setFeed(ModelFeed feed) {
-        this.feed = feed;
     }
 }

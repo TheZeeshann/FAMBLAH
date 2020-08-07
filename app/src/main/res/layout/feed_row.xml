@@ -1,37 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp"
+    android:background="#fff6f6"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
         android:id="@+id/cardView"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="3dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/feedUserImage"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:padding="5dp"
                 android:src="@drawable/user"
-                android:id="@+id/userProfileImage"
                 app:civ_border_color="@color/blue"
-                app:civ_border_width="2dp"
-                />
+                app:civ_border_width="2dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginLeft="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/userProfileImage"
-                app:layout_constraintStart_toEndOf="@+id/userProfileImage"
-                app:layout_constraintTop_toTopOf="@+id/userProfileImage">
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/feedUserImage"
+                app:layout_constraintStart_toEndOf="@+id/feedUserImage"
+                app:layout_constraintTop_toTopOf="@+id/feedUserImage">
 
                 <TextView
                     android:id="@+id/tvUserName"
@@ -53,33 +57,33 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:src="@drawable/ic_baseline_more_vert"
-                app:layout_constraintBottom_toBottomOf="@+id/userProfileImage"
+                app:layout_constraintBottom_toBottomOf="@+id/feedUserImage"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/userProfileImage" />
+                app:layout_constraintTop_toTopOf="@+id/feedUserImage" />
 
             <TextView
                 android:id="@+id/tvFeedContent"
-                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/userProfileImage" />
+                android:padding="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/feedUserImage" />
 
             <ImageView
                 android:id="@+id/ivFeedImage"
                 android:layout_width="match_parent"
-                android:scaleType="centerCrop"
-                android:maxHeight="250dp"
-                android:minHeight="200dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
+                android:maxHeight="250dp"
+                android:minHeight="200dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintTop_toBottomOf="@+id/tvFeedContent" />
 
             <TextView
                 android:id="@+id/tvFeedLike"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 Likes"
                 android:layout_marginLeft="10dp"
+                android:text="0 Likes"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ivFeedImage" />
 
@@ -87,8 +91,8 @@
                 android:id="@+id/tvFeedComment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 Comments"
                 android:layout_marginRight="10dp"
+                android:text="0 Comments"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ivFeedImage" />
 
@@ -100,65 +104,65 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvFeedLike" />
 
             <TextView
-                android:textColor="@color/blue"
-                android:drawableTint="@color/blue"
                 android:id="@+id/tvLike"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:padding="8dp"
-                android:visibility="visible"
                 android:layout_marginLeft="10dp"
                 android:drawableLeft="@drawable/ic_baseline_thumb_up"
+                android:drawableTint="@color/blue"
+                android:padding="8dp"
                 android:text=" Like"
+                android:textColor="@color/blue"
                 android:textSize="15dp"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view" />
 
             <TextView
-                android:textColor="@color/blue"
-                android:drawableTint="@color/blue"
                 android:id="@+id/tvUnlike"
-                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:padding="8dp"
                 android:layout_marginLeft="10dp"
                 android:drawableLeft="@drawable/ic_baseline_thumb_up"
+                android:drawableTint="@color/colorRed"
+                android:padding="8dp"
                 android:text=" Liked"
+                android:textColor="@color/colorRed"
                 android:textSize="15dp"
+                android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view" />
 
             <TextView
-                android:textColor="@color/blue"
-                android:drawableTint="@color/blue"
                 android:id="@+id/tvComment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:drawableLeft="@drawable/ic_baseline_comment"
-                android:text=" Comment"
-                android:textSize="15dp"
+                android:drawableTint="@color/blue"
                 android:padding="8dp"
+                android:text=" Comment"
+                android:textColor="@color/blue"
+                android:textSize="15dp"
                 app:layout_constraintEnd_toStartOf="@+id/tvShare"
                 app:layout_constraintStart_toEndOf="@+id/tvLike"
                 app:layout_constraintTop_toBottomOf="@+id/view" />
 
             <TextView
-                android:textColor="@color/blue"
-                android:drawableTint="@color/blue"
                 android:id="@+id/tvShare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:drawableLeft="@drawable/ic_baseline_share"
-                android:gravity="right"
-                android:text=" Share"
-                android:textSize="15dp"
-                android:padding="8dp"
                 android:layout_marginRight="10dp"
+                android:drawableLeft="@drawable/ic_baseline_share"
+                android:drawableTint="@color/blue"
+                android:gravity="right"
+                android:padding="8dp"
+                android:text=" Share"
+                android:textColor="@color/blue"
+                android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view" />
 

@@ -48,6 +48,7 @@ public class SharedPrefHandler {
                 sharedPreferences.getInt(Constants.USER_ID,-1),
                 sharedPreferences.getInt(Constants.USER_FEEDS_COUNT,0),
                 sharedPreferences.getInt(Constants.USER_FRIENDS_COUNT,0),
+                sharedPreferences.getInt(Constants.USER_FRIENDSHIP_STATUS,0),
                 sharedPreferences.getString(Constants.USER_NAME,null),
                 sharedPreferences.getString(Constants.USER_USERNAME,null),
                 sharedPreferences.getString(Constants.USER_EMAIL,null),
@@ -67,6 +68,20 @@ public class SharedPrefHandler {
             return true;
         }
         return false;
+    }
+
+    public void saveNotificationsCount(int notificationsCount)
+    {
+        sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(Constants.NOTIFICATIONS_COUNT,notificationsCount);
+        editor.apply();
+    }
+
+    public int getNotificationsCount()
+    {
+        sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(Constants.NOTIFICATIONS_COUNT,0);
     }
 
     public void doLogout()

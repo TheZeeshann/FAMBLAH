@@ -25,7 +25,7 @@
             android:id="@+id/userProfileImage"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/mufazmi"
+            android:src="@drawable/user"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="-65dp"
             app:civ_border_color="@color/white"
@@ -36,7 +36,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tvUserName"
-            android:text="Umair Farooqui"
             android:layout_gravity="center_horizontal"
             android:textStyle="bold"
             android:textSize="18sp"
@@ -48,7 +47,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="\@mufazmi"
             android:textColor="@color/black"
             android:textStyle="bold" />
 
@@ -61,13 +59,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:padding="5dp"
-            android:text="@string/about1"
             android:textColor="@color/black"/>
 
        <LinearLayout
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:weightSum="3"
+           android:weightSum="2"
            android:orientation="horizontal">
 
            <LinearLayout
@@ -126,37 +123,10 @@
 
            </LinearLayout>
 
-           <LinearLayout
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_weight="1"
-               android:gravity="center_horizontal"
-               android:orientation="vertical">
-
-               <TextView
-                   android:id="@+id/tvFeedssCount"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="0"
-                   android:textColor="@color/black"
-                   android:textSize="20sp"
-                   android:textStyle="bold"
-                   />
-
-               <TextView
-                   android:id="@+id/tvFeedssText"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="Feeds"
-                   android:textColor="@color/black"
-                   android:textStyle="bold"
-                   />
-
-           </LinearLayout>
 
        </LinearLayout>
 
-        <Button
+        <android.widget.Button
             android:id="@+id/btnEditProfile"
             android:layout_width="wrap_content"
             android:layout_marginTop="20dp"

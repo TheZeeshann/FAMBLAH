@@ -1,11 +1,14 @@
-package com.socialcodia.famblah.model;
+package com.socialcodia.famblah.model.response;
 
-public class ResponseLogin {
+import com.socialcodia.famblah.model.ModelUser;
+
+public class ResponseUser {
+
     private Boolean error;
     private String message;
     private ModelUser user;
 
-    public ResponseLogin(Boolean error, String message, ModelUser user) {
+    public ResponseUser(Boolean error, String message, ModelUser user) {
         this.error = error;
         this.message = message;
         this.user = user;

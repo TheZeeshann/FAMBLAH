@@ -1,7 +1,5 @@
 package com.socialcodia.famblah.fragment;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,12 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.socialcodia.famblah.activity.MainActivity;
 import com.socialcodia.famblah.model.ModelFeed;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.adapter.AdapterFeed;
 import com.socialcodia.famblah.api.ApiClient;
-import com.socialcodia.famblah.model.ResponseFeeds;
+import com.socialcodia.famblah.model.response.ResponseFeeds;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
+import com.socialcodia.famblah.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,15 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         feedRecyclerView.setLayoutManager(layoutManager);
         modelFeedList = new ArrayList<>();
+
+        try {
+            ((MainActivity)getActivity()).getNotificationsCount();
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
         getFeeds();
 
         return view;
@@ -48,43 +57,46 @@ public class HomeFragment extends Fragment {
 
     private void getFeeds()
     {
-        Call<ResponseFeeds> call = ApiClient.getInstance().getApi().getFeeds(SharedPrefHandler.getInstance(getContext()).getUser().getToken());
-        call.enqueue(new Callback<ResponseFeeds>() {
-            @Override
-            public void onResponse(Call<ResponseFeeds> call, Response<ResponseFeeds> response) {
-                ResponseFeeds responseFeeds = response.body();
-                if (responseFeeds !=null)
-                {
-                    if (!responseFeeds.getError())
+        if (Utils.isNetworkAvailable(getContext()))
+        {
+            Call<ResponseFeeds> call = ApiClient.getInstance().getApi().getFeeds(SharedPrefHandler.getInstance(getContext()).getUser().getToken());
+            call.enqueue(new Callback<ResponseFeeds>() {
+                @Override
+                public void onResponse(Call<ResponseFeeds> call, Response<ResponseFeeds> response) {
+                    ResponseFeeds responseFeeds = response.body();
+                    if (responseFeeds !=null)
                     {
-                        if (responseFeeds.getFeeds()!=null)
+                        if (!responseFeeds.getError())
                         {
-                            modelFeedList = responseFeeds.getFeeds();
-                            AdapterFeed adapterFeed = new AdapterFeed(modelFeedList,getContext());
-                            feedRecyclerView.setAdapter(adapterFeed);
+                            if (responseFeeds.getFeeds()!=null)
+                            {
+                                modelFeedList = responseFeeds.getFeeds();
+                                AdapterFeed adapterFeed = new AdapterFeed(modelFeedList,getContext());
+                                feedRecyclerView.setAdapter(adapterFeed);
+                            }
+                            else
+                            {
+                                Toast.makeText(getContext(), "Server Doesn't Return Any Feeds In Response", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else
                         {
-                            Toast.makeText(getContext(), "Server Doesn't Return Any Feeds In Response", Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(getContext(), "Error :"+ responseFeeds.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                     else
                     {
-
-                        Toast.makeText(getContext(), "Error :"+ responseFeeds.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "No Response From Server", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(), "No Response From Server", Toast.LENGTH_SHORT).show();
+
                 }
 
-            }
+                @Override
+                public void onFailure(Call<ResponseFeeds> call, Throwable t) {
 
-            @Override
-            public void onFailure(Call<ResponseFeeds> call, Throwable t) {
-                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                }
+            });
+        }
     }
 }

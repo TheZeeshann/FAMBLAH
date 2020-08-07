@@ -12,10 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.socialcodia.famblah.R;
+import com.socialcodia.famblah.activity.MainActivity;
 import com.socialcodia.famblah.adapter.AdapterUser;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
-import com.socialcodia.famblah.model.ResponseUsers;
+import com.socialcodia.famblah.model.response.ResponseUsers;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
 import com.socialcodia.famblah.utils.Utils;
 
@@ -44,6 +45,14 @@ public class UsersFragment extends Fragment {
         userRecyclerView.setLayoutManager(layoutManager);
 
         modelUserList = new ArrayList<>();
+
+        try {
+            ((MainActivity)getActivity()).getNotificationsCount();
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         getUser();
         return view;
@@ -79,7 +88,6 @@ public class UsersFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<ResponseUsers> call, Throwable t) {
-                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
