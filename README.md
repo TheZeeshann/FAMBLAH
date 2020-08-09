@@ -12,8 +12,6 @@ After become a members of the application users can search people, make friends,
     <img src="https://i.imgur.com/6S1TfHE.jpg" width="200" >
     <img src="https://i.imgur.com/r3G5pcd.jpg" width="200" >
     <img src="https://i.imgur.com/UpV5tS3.jpg" width="200" >
-    <img src="https://i.imgur.com/eqImYBL.jpg" width="200" >
-    <img src="https://i.imgur.com/iO7VS16.jpg" width="200" >
 </p>
 
 <p align="center">
