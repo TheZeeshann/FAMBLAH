@@ -8,11 +8,22 @@ In this social networking application users can create free account and communic
 
 After become a members of the application users can search people, make friends, post feeds, like and comment on feeds, share feeds directly to another app, and all other facilities of our Application.
 
-![Login Activity](https://i.imgur.com/6S1TfHE.jpg)
+<p align="center">
+    <img src="https://i.imgur.com/6S1TfHE.jpg" width="120" >
+</p>
 
-![Forgot Password Activity](https://i.imgur.com/r3G5pcd.jpg)
+<p align="center">
+    <img src="https://i.imgur.com/r3G5pcd.jpg" width="120" >
+</p>
 
-![Post Feed Activity](https://i.imgur.com/UpV5tS3.jpg)
-![Public Profile Activity](https://i.imgur.com/eqImYBL.jpg)
+<p align="center">
+    <img src="https://i.imgur.com/UpV5tS3.jpg" width="120" >
+</p>
 
-![Personal Profile Fragment](https://i.imgur.com/iO7VS16.jpg)
+<p align="center">
+    <img src="https://i.imgur.com/eqImYBL.jpg" width="120" >
+</p>
+
+<p align="center">
+    <img src="https://i.imgur.com/iO7VS16.jpg" width="120" >
+</p>
