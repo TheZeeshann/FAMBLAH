@@ -21,11 +21,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    //    private static final String BASE_URL = "http://10.0.2.2/SocialApiFriendsSystem/public/";
-//        private static final String BASE_URL = "http://10.0.2.2/SocialApiFriendsSystemVideo/public/";
-        private static final String BASE_URL = "http://10.0.2.2/SocialApiFriendsSystemVideoThumb/public/";
-//        private static final String BASE_URL = "http://172.16.0.111/SocialApiFriendsSystemVideoThumb/public/";
-//    private static final String BASE_URL = "http://famblah.cf/public/";
+    private static final String BASE_URL_G = "http://111.111.111.111/SocialApiFriendsSystemVideo/public/";
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
     public static final String HEADER_PRAGMA = "Pragma";
     private static final String TAG = "ServiceGenerator";
@@ -41,7 +37,7 @@ public class ApiClient {
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(BASE_URL_G)
                 .client(okHttpClient())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();

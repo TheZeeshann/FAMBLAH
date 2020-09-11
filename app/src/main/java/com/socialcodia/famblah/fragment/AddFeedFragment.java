@@ -141,9 +141,13 @@ public class AddFeedFragment extends Fragment {
     private void validateData()
     {
         String content = inputContent.getText().toString().trim();
-        if (content.length()<=0 && filePath==null || filePathVideo==null)
+        if (content.length()!=0)
         {
-            Toast.makeText(getContext(), "Please write something, or select an image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), content, Toast.LENGTH_SHORT).show();
+        }
+        if (content.length()<=0 && filePath==null)
+        {
+            Toast.makeText(getContext(), "Please write something, or select an image ok", Toast.LENGTH_SHORT).show();
         }
         else if (filePath!=null || filePathVideo!=null)
         {
