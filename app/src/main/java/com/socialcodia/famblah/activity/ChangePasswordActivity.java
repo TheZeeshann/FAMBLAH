@@ -1,0 +1,145 @@
+package com.socialcodia.famblah.activity;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.socialcodia.famblah.R;
+import com.socialcodia.famblah.api.ApiClient;
+import com.socialcodia.famblah.model.ModelUser;
+import com.socialcodia.famblah.pojo.ResponseDefault;
+import com.socialcodia.famblah.storage.SharedPrefHandler;
+import com.socialcodia.famblah.utils.Utils;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ChangePasswordActivity extends AppCompatActivity {
+
+    private EditText inputPassword, inputNewPassword,inputConfirmPassword;
+    private Button btnUpdatePassword;
+    SharedPrefHandler sharedPrefHandler;
+    ActionBar actionBar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_change_password);
+
+        //Init
+        inputNewPassword = findViewById(R.id.inputNewPassword);
+        inputPassword = findViewById(R.id.inputPassword);
+        inputConfirmPassword = findViewById(R.id.inputConfirmPassword);
+        btnUpdatePassword = findViewById(R.id.btnUpdatePassword);
+        actionBar = getSupportActionBar();
+        actionBar.setTitle("Change Password");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
+        //Init SharePrefHandler
+        sharedPrefHandler = SharedPrefHandler.getInstance(getApplicationContext());
+        ModelUser modelUser = sharedPrefHandler.getUser();
+        btnUpdatePassword.setOnClickListener(v -> validateData());
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
+    private void validateData()
+    {
+        String password = inputPassword.getText().toString().trim();
+        String newPassword = inputNewPassword.getText().toString().trim();
+        String confirmPassword = inputConfirmPassword.getText().toString().trim();
+        if (password.isEmpty())
+        {
+            inputPassword.setError("Enter Password");
+            inputPassword.requestFocus();
+            return;
+        }
+        if (password.length()<7 || password.length()>30)
+        {
+            inputPassword.setError("Password should be greater than 7 character");
+            inputPassword.requestFocus();
+            return;
+        }
+        if (newPassword.isEmpty())
+        {
+            inputNewPassword.setError("Enter New Password");
+            inputNewPassword.requestFocus();
+            return;
+        }
+        if (newPassword.length()<7 || newPassword.length()>30)
+        {
+            inputNewPassword.setError("Password should be greater than 7 character");
+            inputNewPassword.requestFocus();
+            return;
+        }
+        if (confirmPassword.isEmpty())
+        {
+            inputConfirmPassword.setError("Enter Confirm Password");
+            inputConfirmPassword.requestFocus();
+            return;
+        }
+        if (confirmPassword.length()<7 || confirmPassword.length()>30)
+        {
+            inputConfirmPassword.setError("Password should be greater than 7 character");
+            inputConfirmPassword.requestFocus();
+            return;
+        }
+        if (password==confirmPassword)
+        {
+            inputNewPassword.setError("Password Not Matched");
+            inputNewPassword.requestFocus();
+            inputConfirmPassword.setError("Password Not Matched");
+            inputConfirmPassword.requestFocus();
+            inputConfirmPassword.setText("");
+            inputNewPassword.setError("");
+        }
+        else
+        {
+            doUpdatePassword(password,newPassword);
+        }
+    }
+
+    private void doUpdatePassword(String password, String newPassword)
+    {
+        if (Utils.isNetworkAvailable(getApplicationContext()))
+        {
+            Toast.makeText(getApplicationContext(), "Please wait...", Toast.LENGTH_SHORT).show();
+            btnUpdatePassword.setEnabled(false);
+            ModelUser modelUser = sharedPrefHandler.getUser();
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().updatePassword(modelUser.getToken(),password,newPassword);
+            call.enqueue(new Callback<ResponseDefault>() {
+                @Override
+                public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                    ResponseDefault ResponseDefault = response.body();
+                    if (ResponseDefault!=null)
+                    {
+                        btnUpdatePassword.setEnabled(true);
+                        Toast.makeText(getApplicationContext(), ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        btnUpdatePassword.setEnabled(true);
+                        Toast.makeText(getApplicationContext(), "No Response From Server", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                    btnUpdatePassword.setEnabled(true);
+                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+}

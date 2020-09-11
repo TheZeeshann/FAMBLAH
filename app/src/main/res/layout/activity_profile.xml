@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activity.ProfileActivity">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-55dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:src="@drawable/conver"
+                android:scaleType="centerCrop"
+                />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userProfileImage"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/user"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="-65dp"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="3dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvUserName"
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    />
+
+                <ImageView
+                    android:id="@+id/ivUserVerified"
+                    android:layout_width="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_height="15dp"
+                    android:visibility="gone"
+                    android:tint="@color/blue"
+                    android:src="@drawable/ic_baseline_check_circle"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvUserUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvUserBio"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:textColor="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvFeedsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvFeedsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Feeds"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layoutFriend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvFriendsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvFriendsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Friends"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <android.widget.Button
+                android:id="@+id/btnAddFriend"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Add Friend"
+                android:paddingRight="30dp"
+                android:textColor="@color/white"
+                android:paddingLeft="30dp"
+                android:visibility="gone"
+                android:textStyle="bold"
+                android:background="@drawable/btn_corner_blue"/>
+
+            <android.widget.Button
+                android:id="@+id/btnUnFriend"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:text="UnFriend"
+                android:paddingRight="30dp"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:paddingLeft="30dp"
+                android:textStyle="bold"
+                android:background="@drawable/btn_corner_red"/>
+
+            <android.widget.Button
+                android:id="@+id/btnCancelFriendRequest"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal"
+                android:text="Cancel Request"
+                android:paddingRight="30dp"
+                android:textColor="@color/white"
+                android:paddingLeft="30dp"
+                android:textStyle="bold"
+                android:background="@drawable/btn_corner_red"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <android.widget.Button
+                    android:id="@+id/btnAcceptFriendRequest"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Accept"
+                    android:visibility="gone"
+                    android:paddingRight="30dp"
+                    android:textColor="@color/white"
+                    android:paddingLeft="30dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/btn_corner_blue"/>
+
+                <android.widget.Button
+                    android:id="@+id/btnRejectFriendRequest"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Reject"
+                    android:visibility="gone"
+                    android:paddingRight="30dp"
+                    android:textColor="@color/white"
+                    android:paddingLeft="30dp"
+                    android:textStyle="bold"
+                    android:background="@drawable/btn_corner_red"/>
+
+            </LinearLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/feedRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                android:layout_marginBottom="55dp"
+                tools:listitem="@layout/feed_row" />
+
+
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

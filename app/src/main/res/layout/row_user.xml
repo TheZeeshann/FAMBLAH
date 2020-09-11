@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/userRowLayout"
+        android:layout_width="match_parent"
+        android:padding="5dp"
+        android:layout_height="wrap_content"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userProfileImage"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/mufazmi"
+            app:civ_border_color="@color/blue"
+            app:civ_border_width="2dp"/>
+
+        <LinearLayout
+            android:id="@+id/linearLayout7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/userProfileImage"
+            app:layout_constraintStart_toEndOf="@+id/userProfileImage"
+            app:layout_constraintTop_toTopOf="@+id/userProfileImage">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Umair Farooqui"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ivUserVerified"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/ic_baseline_check_circle"
+                    android:tint="@color/blue"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvUserEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="socialcodia@gmail.com"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <android.widget.Button
+            android:id="@+id/btnAddFriend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/btn_corner_blue"
+            android:padding="8dp"
+            android:drawableLeft="@drawable/ic_baseline_person_add"
+            android:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout7" />
+
+        <android.widget.Button
+            android:id="@+id/btnUnFriend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/btn_corner_red"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:drawableLeft="@drawable/ic_baseline_delete"
+            android:padding="8dp"
+            android:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout7"
+            app:layout_constraintEnd_toStartOf="@+id/btnAddFriend"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout7" />
+
+        <android.widget.Button
+            android:id="@+id/btnCancelFriendRequest"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/btn_corner_red"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:drawableLeft="@drawable/ic_baseline_cancel"
+            android:textColor="@color/white"
+            android:drawableTint="@color/white"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout7"
+            app:layout_constraintEnd_toStartOf="@+id/btnAddFriend"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout7" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toStartOf="@+id/btnAddFriend"
+            tools:layout_editor_absoluteY="5dp">
+
+            <android.widget.Button
+                android:id="@+id/btnAcceptFriendRequest"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:background="@drawable/btn_corner_blue"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:drawableLeft="@drawable/ic_baseline_check_circle"
+                android:drawableTint="@color/white"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <android.widget.Button
+                android:id="@+id/btnRejectFriendRequest"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:padding="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_corner_red"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:drawableLeft="@drawable/ic_baseline_cancel"
+                android:drawableTint="@color/white"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

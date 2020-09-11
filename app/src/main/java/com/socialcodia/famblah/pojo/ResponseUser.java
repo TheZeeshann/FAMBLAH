@@ -1,0 +1,40 @@
+package com.socialcodia.famblah.pojo;
+
+import com.socialcodia.famblah.model.ModelUser;
+
+public class ResponseUser {
+
+    private Boolean error;
+    private String message;
+    private ModelUser user;
+
+    public ResponseUser(Boolean error, String message, ModelUser user) {
+        this.error = error;
+        this.message = message;
+        this.user = user;
+    }
+
+    public Boolean getError() {
+        return error;
+    }
+
+    public void setError(Boolean error) {
+        this.error = error;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public ModelUser getUser() {
+        return user;
+    }
+
+    public void setUser(ModelUser user) {
+        this.user = user;
+    }
+}
