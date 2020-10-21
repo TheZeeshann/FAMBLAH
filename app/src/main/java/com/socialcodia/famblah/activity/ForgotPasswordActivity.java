@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.pojo.ResponseDefault;
@@ -22,7 +24,7 @@ import retrofit2.Response;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
-    private EditText inputEmail;
+    private TextInputEditText inputEmail;
     private Button btnForgotPassword;
     private TextView tvLogin;
 
@@ -33,19 +35,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         init();
 
-        btnForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
+        btnForgotPassword.setOnClickListener(v -> validateData());
 
-        tvLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendToLogin();
-            }
-        });
+        tvLogin.setOnClickListener(v -> sendToLogin());
 
     }
 
@@ -71,13 +63,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         String email = inputEmail.getText().toString().trim();
         if (email.isEmpty())
         {
-            inputEmail.setError("Enter Email");
+            inputEmail.setError(getString(R.string.EE));
             inputEmail.requestFocus();
             return;
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
         {
-            inputEmail.setError("Enter Valid Email");
+            inputEmail.setError(getString(R.string.EVE));
             inputEmail.requestFocus();
         }
         else
@@ -101,7 +93,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
-                            Toast.makeText(ForgotPasswordActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             btnForgotPassword.setEnabled(true);
                             sendToResetPasswordWithEmail(email);
                         }
@@ -121,13 +113,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                Toast.makeText(ForgotPasswordActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                                TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                             }
                         }
                     }
                     else
                     {
-                        Toast.makeText(ForgotPasswordActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         btnForgotPassword.setEnabled(true);
                     }
                 }

@@ -9,4 +9,23 @@ In this social networking application users can create free account and communic
     <string name="about1">With thoughtful analysis and fearless work of our Team, We will track technology state in india and the world and provide a powerful security to connect you to with your friends and family.</string>
     <string name="verification_request_desc">A verified badge is a check that appears next to an FAMBLAH account\'s name to indicate that the account is the authentic presence of a notable public figure, celebrity, global brand or entity it represents. \n\n Submitting a request for verification does not guarantee that your account will be varified.</string>
     <string name="verification_request_desc1">We require a government-issued photo ID that shows your name and date of birth (e.g. driver\'s license, passport or national identification card) or official business documents (tax filling, recent utility bill. article of incorporation) in order to review of your request.</string>
+    <string name="INVITE_TEXT">Try FAMBLAH, its a very fast and secure social media platform. Get it at http://famblah.ml</string>
+    <string name="APP_NAME_CAP">FAMBLAH</string>
+    <string name="SNR">Server Not Responding</string>
+    <string name="EVE">Enter Valid Email</string>
+    <string name="EE">Enter Email</string>
+    <string name="EVN">Enter Valid Name</string>
+    <string name="EN">Enter Name</string>
+    <string name="DEV_MOBILE">+919867503256</string>
+    <string name="EP">Enter Password</string>
+    <string name="ENP">Enter New Password</string>
+    <string name="ECP">Enter Confirm Password</string>
+    <string name="PNM">Password Not Matched</string>
+    <string name="PG7">Password should be greater than 7 character</string>
+    <string name="SWW">Something Went Wrong</string>
+    <string name="EU">Enter Username</string>
+    <string name="REPORT_FEED">Report Feed</string>
+    <string name="REPORT_FEED_DESC">Report this feed if you think this feed is violating our community guidelines, We will investigate and take action on your report ASAP.\nNote:  No one even you also can\'t seen who\'s reported this feed.</string>
+    <string name="ARE_YOU_SURE_WANT_TO_DELETE">Are you sure want to delete</string>
+    <string name="FORGOT_PASSWORD">Forgot Password?</string>
 </resources>

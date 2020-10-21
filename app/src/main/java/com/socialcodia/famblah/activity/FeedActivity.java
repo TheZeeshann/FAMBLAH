@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.adapter.AdapterFeed;
 import com.socialcodia.famblah.fragment.AddFeedFragment;
 import com.socialcodia.famblah.pojo.ResponseComment;
@@ -111,6 +112,8 @@ public class FeedActivity extends AppCompatActivity {
         tvUnlike.setOnClickListener(v -> doUnlike(feedId));
 
         tvShare.setOnClickListener(v -> shareFeedWithImage(feedContent));
+
+        tvShare.setOnClickListener(v-> {});
 
         ivFeedImage.setOnClickListener(v->sendToZoomImage());
 
@@ -212,13 +215,13 @@ public class FeedActivity extends AppCompatActivity {
                     if (!responseComment.getError())
                     {
                         modelCommentList = responseComment.getComments();
-                        adapterComment = new AdapterComment(getApplicationContext(),modelCommentList);
+                        adapterComment = new AdapterComment(FeedActivity.this,modelCommentList);
                         commentRecyclerView.setAdapter(adapterComment);
                     }
                 }
                 else
                 {
-                    Toast.makeText(FeedActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 
@@ -260,7 +263,7 @@ public class FeedActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 @Override
@@ -291,7 +294,7 @@ public class FeedActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 @Override
@@ -327,13 +330,12 @@ public class FeedActivity extends AppCompatActivity {
                         Boolean liked = modelFeed.getLiked();
                         String feedLikes = modelFeed.getFeedLikes().toString();
                         String feedComments = modelFeed.getFeedComments().toString();
-                        int verified = modelFeed.getUserVerified();
+                        int status = modelFeed.getUserStatus();
                         String feedType = modelFeed.getFeedType();
                         String feedVideoUrl = modelFeed.getFeedVideo();
 
                         if (feedType.equals("video"))
                         {
-                            Toast.makeText(FeedActivity.this, "Feed Video Url Is "+feedVideoUrl, Toast.LENGTH_SHORT).show();
                             feedVideo.setVisibility(View.VISIBLE);
                             MediaController mediaController = new MediaController(FeedActivity.this);
                             mediaController.setAnchorView(feedVideo);
@@ -363,7 +365,7 @@ public class FeedActivity extends AppCompatActivity {
                             }
                         }
 
-                        if (verified==0)
+                        if (status==0)
                         {
                             ivUserVerified.setVisibility(View.GONE);
                         }
@@ -409,13 +411,13 @@ public class FeedActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(FeedActivity.this, responseFeed.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),responseFeed.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         onBackPressed();
                     }
                 }
                 else
                 {
-                    Toast.makeText(FeedActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 
@@ -426,6 +428,7 @@ public class FeedActivity extends AppCompatActivity {
         });
     }
 
+    //Showing feed option on more button click
     private void showFeedActionOption(ImageView ivFeedOption, String feedId,String feedUserId )
     {
         PopupMenu popupMenu = new PopupMenu(getApplicationContext(),ivFeedOption);
@@ -443,7 +446,6 @@ public class FeedActivity extends AppCompatActivity {
             }
             else if (id==2)
             {
-//                    reportFeed(feedId);
                 reportFeedAlert(feedId);
             }
 
@@ -455,8 +457,8 @@ public class FeedActivity extends AppCompatActivity {
     private void reportFeedAlert(String feedId)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(FeedActivity.this);
-        builder.setTitle("Report");
-        builder.setMessage("Are you sure want to report this feed?");
+        builder.setTitle(getString(R.string.REPORT_FEED));
+        builder.setMessage(getString(R.string.REPORT_FEED_DESC));
         builder.setPositiveButton("Yes",((dialog, which) -> {
             reportFeed(feedId);
         }));
@@ -489,11 +491,11 @@ public class FeedActivity extends AppCompatActivity {
                 if (response.isSuccessful())
                 {
                     ResponseDefault ResponseDefault = response.body();
-                    Toast.makeText(getApplicationContext(), ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),ResponseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
             @Override
@@ -516,17 +518,17 @@ public class FeedActivity extends AppCompatActivity {
                         ResponseDefault ResponseDefault = response.body();
                         if (!ResponseDefault.getError())
                         {
-                            Toast.makeText(FeedActivity.this, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),ResponseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             onBackPressed();
                         }
                         else
                         {
-                            Toast.makeText(FeedActivity.this, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),ResponseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(FeedActivity.this,"Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -538,6 +540,7 @@ public class FeedActivity extends AppCompatActivity {
         }
     }
 
+    //Validating if is comment empty
     private void validateData()
     {
         comment = inputComment.getText().toString().trim();
@@ -579,12 +582,12 @@ public class FeedActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            Toast.makeText(FeedActivity.this, responseComment.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseComment.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(FeedActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 

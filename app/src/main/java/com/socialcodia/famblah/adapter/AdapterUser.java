@@ -2,7 +2,6 @@ package com.socialcodia.famblah.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.activity.ProfileActivity;
 import com.socialcodia.famblah.api.ApiClient;
@@ -50,7 +50,6 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
         this.sharedPrefHandler = SharedPrefHandler.getInstance(context);
         this.mUser = sharedPrefHandler.getUser();
         this.token = mUser.getToken();
-
     }
 
     @NonNull
@@ -68,10 +67,10 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
         String image = user.getImage();
         String username = user.getUsername();
         int friendShipStatus = user.getFriendshipStatus();
-        int verified = user.getVerified();
+        int status = user.getStatus();
         int hisUserId = user.getId();
 
-        if (verified==0)
+        if (status==0)
         {
             holder.ivUserVerified.setVisibility(View.GONE);
         }
@@ -112,7 +111,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
         }
         catch (Exception e)
         {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
 
         holder.userRowLayout.setOnClickListener(v -> {
@@ -255,6 +254,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
+                            TastyToast.makeText(context,"Friendship Request Rejected",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             holder.btnRejectFriendRequest.setEnabled(true);
                             holder.btnRejectFriendRequest.setVisibility(View.GONE);
                             holder.btnAcceptFriendRequest.setVisibility(View.GONE);
@@ -263,20 +263,20 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         else
                         {
                             holder.btnRejectFriendRequest.setEnabled(true);
-                            Toast.makeText(context, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         holder.btnRejectFriendRequest.setEnabled(true);
-                        Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     holder.btnRejectFriendRequest.setEnabled(true);
-                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }
@@ -296,6 +296,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
+                            TastyToast.makeText(context,"Friend Request Accepted",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             holder.btnAcceptFriendRequest.setEnabled(true);
                             holder.btnRejectFriendRequest.setVisibility(View.GONE);
                             holder.btnAcceptFriendRequest.setVisibility(View.GONE);
@@ -304,20 +305,20 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         else
                         {
                             holder.btnAcceptFriendRequest.setEnabled(true);
-                            Toast.makeText(context, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         holder.btnAcceptFriendRequest.setEnabled(true);
-                        Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     holder.btnAcceptFriendRequest.setEnabled(true);
-                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }
@@ -337,6 +338,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
+                            TastyToast.makeText(context,"Friendship Request Canceled",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             holder.btnCancelFriendRequest.setEnabled(true);
                             holder.btnCancelFriendRequest.setVisibility(View.GONE);
                             holder.btnAddFriend.setVisibility(View.VISIBLE);
@@ -344,20 +346,20 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         else
                         {
                             holder.btnCancelFriendRequest.setEnabled(true);
-                            Toast.makeText(context, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         holder.btnCancelFriendRequest.setEnabled(true);
-                        Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     holder.btnCancelFriendRequest.setEnabled(true);
-                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }
@@ -377,6 +379,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
+                            TastyToast.makeText(context,"Friendship Deleted",TastyToast.LENGTH_LONG,TastyToast.ERROR);
                             holder.btnUnFriend.setEnabled(true);
                             holder.btnUnFriend.setVisibility(View.GONE);
                             holder.btnAddFriend.setVisibility(View.VISIBLE);
@@ -384,20 +387,20 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                         else
                         {
                             holder.btnUnFriend.setEnabled(true);
-                            Toast.makeText(context, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         holder.btnUnFriend.setEnabled(true);
-                        Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     holder.btnUnFriend.setEnabled(true);
-                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }
@@ -420,23 +423,23 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                             holder.btnAddFriend.setEnabled(true);
                             holder.btnAddFriend.setVisibility(View.GONE);
                             holder.btnCancelFriendRequest.setVisibility(View.VISIBLE);
-                            Toast.makeText(context, "Friend Request Sent", Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,"Friend Request Sent",TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                         else
                         {
-                            Toast.makeText(context, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     holder.btnAddFriend.setEnabled(true);
-                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }

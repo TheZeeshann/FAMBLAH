@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.pojo.ResponseDefault;
@@ -22,7 +24,7 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText inputName, inputUsername, inputEmail, inputPassword;
+    private TextInputEditText inputName, inputUsername, inputEmail, inputPassword;
     private Button btnRegister;
     private TextView tvLogin;
 
@@ -30,23 +32,9 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         init();
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
-
-        tvLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendToLogin();
-            }
-        });
-
+        btnRegister.setOnClickListener(v -> validateData());
+        tvLogin.setOnClickListener(v -> sendToLogin());
     }
 
     private void sendToLogin()
@@ -141,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                         if (!responseDefault.getError())
                         {
                             sendToLoginWithEmailAndPassword(email,password);
-                            Toast.makeText(RegisterActivity.this, responseDefault.getMessage(), Toast.LENGTH_LONG).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         }
                         else
                         {
@@ -160,13 +148,13 @@ public class RegisterActivity extends AppCompatActivity {
                             else
                             {
                                 btnRegister.setEnabled(true);
-                                Toast.makeText(getApplicationContext(),responseDefault.getMessage(),Toast.LENGTH_SHORT).show();
+                                TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                             }
                         }
                     }
                     else
                     {
-                        Toast.makeText(RegisterActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         btnRegister.setEnabled(true);
                     }
 
@@ -174,7 +162,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                    Toast.makeText(RegisterActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                     btnRegister.setEnabled(true);
                 }
             });

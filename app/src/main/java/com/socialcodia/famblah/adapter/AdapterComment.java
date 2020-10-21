@@ -3,9 +3,12 @@ package com.socialcodia.famblah.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelComment;
@@ -71,6 +75,7 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
             holder.btnCommentUnLike.setVisibility(View.INVISIBLE);
         }
         int commentId = modelComment.getCommentId();
+        int commentUserId = modelComment.getUserId();
 
         try {
             Picasso.get().load(modelComment.getUserImage()).placeholder(R.drawable.user).into(holder.ivCommentUserProfileImage);
@@ -87,28 +92,26 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
             doCommentUnLike(holder,commentId);
         });
 
-        holder.commentConstraintLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-//                showDialogue(commentId);
-                Toast.makeText(context, "Say No To Delete", Toast.LENGTH_SHORT).show();
-                return true;
-            }
+        holder.commentConstraintLayout.setOnLongClickListener(v -> {
+            showDialogue(commentId);
+            return true;
         });
 
         holder.btnCommentLike.setOnLongClickListener(v -> {
             showDialogue(modelComment.getCommentId());
             return true;
         });
+
+        holder.ivCommentOption.setOnClickListener(v->showCommentAction(holder,commentId,commentUserId));
     }
 
-    private void showDialogue(Integer commentId)
+    private void showDialogue(int commentId)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context.getApplicationContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete");
         builder.setMessage("Are you sure want to delete");
         builder.setPositiveButton("Yes", (dialog, which) -> {
-//                deleteComment(commentId);
+                deleteComment(commentId);
         });
 
         builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
@@ -119,7 +122,7 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
     {
         if (Utils.isNetworkAvailable(context))
         {
-            Call<ResponseDefault> call = ApiClient.getInstance().getApi().cancelFriendRequest(token,commentId);
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().deleteFeedComment(token,commentId);
             call.enqueue(new Callback<ResponseDefault>() {
                 @Override
                 public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
@@ -128,25 +131,53 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
-                            Toast.makeText(context, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         }
                         else
                         {
-                            Toast.makeText(context, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }
+    }
+
+    private void showCommentAction(ViewHolder holder, int commentId, int  commentUserId)
+    {
+        PopupMenu popupMenu = new PopupMenu(context,holder.ivCommentOption);
+        if (userId==commentUserId)
+        {
+            popupMenu.getMenu().add(Menu.NONE,1,1,"Edit");
+            popupMenu.getMenu().add(Menu.NONE,2,2,"Delete");
+        }
+        popupMenu.getMenu().add(Menu.NONE,3,3,"Report");
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            switch (id)
+            {
+                case 1:
+                    Toast.makeText(context, "edit", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    showDialogue(commentId);
+                    break;
+                case 3:
+                    Toast.makeText(context, "report", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            return false;
+        });
+        popupMenu.show();
     }
 
     private void doCommentLike(ViewHolder holder, Integer commentId)
@@ -169,14 +200,14 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.ViewHold
                     {
                         holder.btnCommentUnLike.setVisibility(View.INVISIBLE);
                         holder.btnCommentLike.setVisibility(View.VISIBLE);
-                        Toast.makeText(context, responseComment.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,responseComment.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 @Override
                 public void onFailure(Call<ResponseComment> call, Throwable t) {
                     holder.btnCommentUnLike.setVisibility(View.INVISIBLE);
                     holder.btnCommentLike.setVisibility(View.VISIBLE);
-                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }

@@ -12,9 +12,9 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/undraw_welcome_cats_thqn"
         android:adjustViewBounds="true"
         android:fontFamily="cursive"
+        android:src="@drawable/undraw_welcome_cats_thqn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,84 +23,105 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="30dp"
         android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="26dp">
 
 
-        <EditText
-            android:id="@+id/inputName"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_person"
-            android:drawablePadding="20dp"
-            android:drawableTint="@color/blue"
-            android:ems="10"
             android:hint="Name"
-            android:inputType="textPersonName"
-            android:padding="10dp" />
+            app:startIconTint="@color/blue"
+            app:startIconDrawable="@drawable/ic_baseline_person">
 
-        <EditText
-            android:id="@+id/inputUsername"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:padding="10dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_account_circle"
-            android:drawablePadding="20dp"
-            android:drawableTint="@color/blue"
-            android:ems="10"
             android:hint="Username"
-            android:inputType="textPersonName"
-            android:padding="10dp" />
+            android:layout_marginTop="10dp"
+            app:startIconTint="@color/blue"
+            app:startIconDrawable="@drawable/ic_baseline_person">
 
-        <EditText
-            android:id="@+id/inputEmail"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:padding="10dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_email"
-            android:drawablePadding="20dp"
-            android:drawableTint="@color/blue"
+            android:layout_height="wrap_content"
             android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:padding="10dp"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_marginTop="10dp"
+            app:startIconTint="@color/blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:startIconDrawable="@drawable/ic_baseline_email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputEmail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textEmailAddress"
+                android:padding="10dp"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
-        <EditText
-            android:id="@+id/inputPassword"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_lock"
-            android:drawablePadding="20dp"
-            android:drawableTint="@color/blue"
+            android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="textPassword"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:passwordToggleEnabled="true"
+            app:endIconTint="@color/blue"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:startIconTint="@color/blue"
+            app:startIconDrawable="@drawable/ic_baseline_lock">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPassword"
+                android:padding="10dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/btn_corner"
+            android:layout_marginTop="15dp"
             android:text="Register"
-            android:textColor="#2a2b87"
-            android:textSize="17dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
 
@@ -116,7 +137,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

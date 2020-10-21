@@ -13,7 +13,10 @@ public class Constants {
             USER_FRIENDS_COUNT = "friendsCount",
             USER_FRIENDSHIP_STATUS = "friendsShipStatus",
             NOTIFICATIONS_COUNT = "notificationsCount",
-            USER_VERIFIED = "verified";
+            USER_STATUS = "status",
+            MESSAGE = "message",
+            PASSWORD = "password",
+            NEW_PASSWORD = "newPassword";
 }
 
 

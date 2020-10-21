@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
+
 public class Utils {
 
     public static boolean isNetworkAvailable(Context context) {
@@ -12,7 +14,7 @@ public class Utils {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetworkInfo!=null)
             return true;
-        Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        TastyToast.makeText(context,"No Internet Connection",TastyToast.LENGTH_LONG,TastyToast.ERROR);
         return false;
     }
 

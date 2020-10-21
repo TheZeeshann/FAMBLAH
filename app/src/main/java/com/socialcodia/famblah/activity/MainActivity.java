@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.fragment.AddFeedFragment;
@@ -77,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
                     setFragment(fragment1);
                     actionBar.setTitle("Profile");
                     break;
+                case R.id.miAddFeed:
+                    fragment1 = new AddFeedFragment();
+                    setFragment(fragment1);
+                    actionBar.setTitle("Post Feed");
+                    break;
             }
             return true;
         });
@@ -100,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         this.doublePressToExitPressedOne = true;
-        Toast.makeText(this, "Tab again to Exit", Toast.LENGTH_SHORT).show();
+        TastyToast.makeText(getApplicationContext(),"Tab again to Exit",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
+
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -167,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             boolean storagePermissionAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             if (storagePermissionAccepted)
             {
-                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                TastyToast.makeText(getApplicationContext(),"Permission Granted",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
             }
             else
             {
@@ -193,12 +200,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), responseNotificationsCount.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),responseNotificationsCount.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void doLogout()
     {
-        Toast.makeText(this, "Successfully Logout", Toast.LENGTH_SHORT).show();
+        TastyToast.makeText(getApplicationContext(),"Logout Successfully",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
         sharedPrefHandler.doLogout();
         sendToLogin();
     }

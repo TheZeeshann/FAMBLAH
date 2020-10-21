@@ -4,7 +4,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +18,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Set;
 
 public class SettingActivity extends AppCompatActivity {
@@ -122,11 +128,19 @@ public class SettingActivity extends AppCompatActivity {
     {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_SUBJECT,"FAMBLAH");
-        intent.putExtra(Intent.EXTRA_TEXT,"Try FAMBLAH, its a very fast and secure social media platform. Get it at http://famblah.ml");
-        intent.setType("text/plane");
+        intent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.APP_NAME_CAP));
+        intent.putExtra(Intent.EXTRA_TEXT,getString(R.string.INVITE_TEXT));
+        intent.setType("image/png");
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.famblah_sharing_poster);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(),bitmap,"Fambalh",null);
+        Uri imageUri = Uri.parse(path);
+        intent.putExtra(Intent.EXTRA_STREAM,imageUri);
         startActivity(Intent.createChooser(intent,"choose one"));
     }
+
+
 
     private void sendToChangePassword()
     {
@@ -154,7 +168,7 @@ public class SettingActivity extends AppCompatActivity {
 
     private void doLogout()
     {
-        Toast.makeText(this, "Successfully Logout", Toast.LENGTH_SHORT).show();
+        TastyToast.makeText(getApplicationContext(),"Logout Successfully", TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
         sharedPrefHandler.doLogout();
         sendToLogin();
     }
@@ -165,6 +179,6 @@ public class SettingActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        finish();
+        finishAffinity();
     }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.activity.MainActivity;
 import com.socialcodia.famblah.model.ModelFeed;
 import com.socialcodia.famblah.R;
@@ -77,18 +78,17 @@ public class HomeFragment extends Fragment {
                         }
                         else
                         {
-                            Toast.makeText(getContext(), "Server Doesn't Return Any Feeds In Response", Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getContext(),"No Feed Found", TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-
-                        Toast.makeText(getContext(), "Error :"+ responseFeeds.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),responseFeeds.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(getContext(), "No Response From Server", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
 
             }

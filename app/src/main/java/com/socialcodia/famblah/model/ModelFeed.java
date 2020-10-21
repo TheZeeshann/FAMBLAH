@@ -2,10 +2,11 @@ package com.socialcodia.famblah.model;
 
 public class ModelFeed {
     String  userName,userUsername,userImage,feedImage,feedContent,feedVideo,feedThumbnail,feedType,feedTimestamp;
-    Integer userId,feedId,feedLikes,feedComments,userVerified;
+    Integer userId,feedId,feedLikes,feedComments,userStatus;
     Boolean liked;
 
-    public ModelFeed(String userName, String userUsername, String userImage, String feedImage, String feedContent, String feedVideo, String feedThumbnail, String feedType, String feedTimestamp, Integer userId, Integer feedId, Integer feedLikes, Integer feedComments, Integer userVerified, Boolean liked) {
+
+    public ModelFeed(String userName, String userUsername, String userImage, String feedImage, String feedContent, String feedVideo, String feedThumbnail, String feedType, String feedTimestamp, Integer userId, Integer feedId, Integer feedLikes, Integer feedComments, Integer userStatus, Boolean liked) {
         this.userName = userName;
         this.userUsername = userUsername;
         this.userImage = userImage;
@@ -19,7 +20,7 @@ public class ModelFeed {
         this.feedId = feedId;
         this.feedLikes = feedLikes;
         this.feedComments = feedComments;
-        this.userVerified = userVerified;
+        this.userStatus = userStatus;
         this.liked = liked;
     }
 
@@ -127,12 +128,12 @@ public class ModelFeed {
         this.feedComments = feedComments;
     }
 
-    public Integer getUserVerified() {
-        return userVerified;
+    public Integer getUserStatus() {
+        return userStatus;
     }
 
-    public void setUserVerified(Integer userVerified) {
-        this.userVerified = userVerified;
+    public void setUserStatus(Integer userStatus) {
+        this.userStatus = userStatus;
     }
 
     public Boolean getLiked() {

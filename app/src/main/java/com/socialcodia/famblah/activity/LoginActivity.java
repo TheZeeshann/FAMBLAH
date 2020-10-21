@@ -1,6 +1,7 @@
 package com.socialcodia.famblah.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
@@ -25,11 +29,12 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText inputEmail, inputPassword;
+    private TextInputEditText inputEmail, inputPassword;
     private TextView tvRegister,tvForgotPassword;
     private Button btnLogin;
     private Intent intent;
     private ProgressBar progressBar;
+    private ConstraintLayout constraintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,26 +44,11 @@ public class LoginActivity extends AppCompatActivity {
         setIntentEmailAndPassword();
         checkLoggedInStatus();
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
+        btnLogin.setOnClickListener(v -> validateData());
 
-        tvRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendToRegister();
-            }
-        });
+        tvRegister.setOnClickListener(v -> sendToRegister());
 
-        tvForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendToForgotPassword();
-            }
-        });
+        tvForgotPassword.setOnClickListener(v -> sendToForgotPassword());
 
     }
 
@@ -114,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (email.length()>30)
         {
-            inputEmail.setError("Enter Valid Email");
+            inputEmail.setError(getString(R.string.EVE));
             inputEmail.requestFocus();
             return;
         }
@@ -153,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.INVISIBLE);
                             ModelUser modelUser = responseLogin.getUser();
                             SharedPrefHandler.getInstance(getApplicationContext()).saveUser(modelUser);
-                            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),"Login Successful",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             sendToMainActivity();
                         }
                         else
@@ -166,9 +156,15 @@ public class LoginActivity extends AppCompatActivity {
                                 inputPassword.requestFocus();
                                 return;
                             }
-                            if (responseLogin.getMessage().equals("Email or Username is Wrong"))
+                            if (responseLogin.getMessage().toLowerCase().equals("email is not registered"))
                             {
-                                inputEmail.setError("Wrong Email or Username");
+                                inputEmail.setError("Email is not Registered");
+                                inputEmail.requestFocus();
+                                return;
+                            }
+                            if (responseLogin.getMessage().toLowerCase().equals("username is not registered"))
+                            {
+                                inputEmail.setError("Username is not Registered");
                                 inputEmail.requestFocus();
                                 return;
                             }
@@ -179,21 +175,20 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                Toast.makeText(LoginActivity.this, responseLogin.getMessage(), Toast.LENGTH_SHORT).show();
+                                TastyToast.makeText(getApplicationContext(),responseLogin.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                             }
                         }
                     }
                     else
                     {
                         progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(LoginActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         btnLogin.setEnabled(true);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                    Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                     btnLogin.setEnabled(true);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
@@ -210,14 +205,16 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+
     private void init()
     {
-        inputEmail = findViewById(R.id.inputEmail);
-        inputPassword = findViewById(R.id.inputPassword);
+        inputEmail = (TextInputEditText) findViewById(R.id.inputEmail);
+        inputPassword = (TextInputEditText) findViewById(R.id.inputPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvRegister);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
         progressBar = findViewById(R.id.progressBar);
+        constraintLayout = findViewById(R.id.constraintLayout);
 
         progressBar.setVisibility(View.INVISIBLE);
     }

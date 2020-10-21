@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.activity.MainActivity;
 import com.socialcodia.famblah.adapter.AdapterNotification;
@@ -70,12 +71,12 @@ public class NotificationFragment extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getContext(), responseNotification.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),responseNotification.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 
@@ -105,23 +106,23 @@ public class NotificationFragment extends Fragment {
                             }
                             catch (Exception e)
                             {
-
+                                e.printStackTrace();
                             }
                         }
                         else
                         {
-                            Toast.makeText(getContext(), responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
-
+                    t.printStackTrace();
                 }
             });
         }

@@ -5,9 +5,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class MyApplication extends Application {
+public class SocialCodia extends Application {
 
-    private static MyApplication instance;
+    private static SocialCodia instance;
 
     @Override
     public void onCreate() {
@@ -19,7 +19,7 @@ public class MyApplication extends Application {
         }
     }
 
-    public  static  MyApplication getInstance()
+    public  static SocialCodia getInstance()
     {
         return  instance;
     }

@@ -19,12 +19,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.activity.MainActivity;
 import com.socialcodia.famblah.api.ApiClient;
@@ -57,8 +61,12 @@ public class AddFeedFragment extends Fragment {
     private Button btnPostFeed;
     private CardView cardView;
     private Bitmap bitmap;
+    private Spinner privacySpinner;
+    String[] privacyTitle = {"Public","Friends","Only me"};
+    String[] privacyDescription = {"Anyone on Famblah","Your friends on Famblah","Only me"};
     String token;
     Uri filePath, filePathVideo;
+    int feedPrivacy = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,11 +74,38 @@ public class AddFeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_feed, container, false);
         init(view);
         setHasOptionsMenu(true);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,privacyTitle);
+        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        privacySpinner.setAdapter(arrayAdapter);
         ModelUser modelUser = SharedPrefHandler.getInstance(getContext()).getUser();
         token = modelUser.getToken();
         tvUserName.setText(modelUser.getName());
         Picasso.get().load(modelUser.getImage()).into(userProfileImage);
         Picasso.get().load(modelUser.getImage()).into(feedUserImage);
+
+        privacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                switch (position)
+                {
+                    case 0:
+                        feedPrivacy = 1;
+                        break;
+                    case 1:
+                        feedPrivacy = 2;
+                        break;
+                    case 2:
+                        feedPrivacy = 3;
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         selectFeedImage.setOnClickListener(v->chooseImage());
 
@@ -111,12 +146,7 @@ public class AddFeedFragment extends Fragment {
         ivFeedImage.setVisibility(View.GONE);
         tvFeedTimestamp.setText(getTime(System.currentTimeMillis()));
 
-        btnPostFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
+        btnPostFeed.setOnClickListener(v -> validateData());
 
         return view;
     }
@@ -136,6 +166,7 @@ public class AddFeedFragment extends Fragment {
         userProfileImage = view.findViewById(R.id.userProfileImage);
         feedUserImage = view.findViewById(R.id.feedUserImage);
         cardView = view.findViewById(R.id.cardView);
+        privacySpinner = view.findViewById(R.id.privacySpinner);
     }
 
     private void validateData()
@@ -147,7 +178,7 @@ public class AddFeedFragment extends Fragment {
         }
         if (content.length()<=0 && filePath==null)
         {
-            Toast.makeText(getContext(), "Please write something, or select an image ok", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(getContext(),"Can't post empty feed",TastyToast.LENGTH_LONG,TastyToast.WARNING);
         }
         else if (filePath!=null || filePathVideo!=null)
         {
@@ -182,7 +213,7 @@ public class AddFeedFragment extends Fragment {
         {
             btnPostFeed.setEnabled(false);
             String image = "";
-            Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeed(token,content);
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeed(token,feedPrivacy,content);
             call.enqueue(new Callback<ResponseDefault>() {
                 @Override
                 public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
@@ -198,14 +229,14 @@ public class AddFeedFragment extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         btnPostFeed.setEnabled(true);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                     btnPostFeed.setEnabled(true);
                 }
             });
@@ -223,17 +254,17 @@ public class AddFeedFragment extends Fragment {
         if (Utils.isNetworkAvailable(getContext()))
         {
             Map<String,RequestBody> map = new HashMap<>();
-            Toast.makeText(getContext(), "Posting...", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(getContext(),"Posting...",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
             btnPostFeed.setEnabled(false);
             String image = "";
             map.put("content",toRequestBody(content));
-            Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeedWithImage(token,map,body);
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().postFeedWithImage(token,feedPrivacy,map,body);
             call.enqueue(new Callback<ResponseDefault>() {
                 @Override
                 public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
                     if (response.isSuccessful())
                     {
-                        Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),response.body().getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         inputContent.setText("");
                         inputFeedImage.setImageBitmap(null);
                         btnPostFeed.setEnabled(true);
@@ -242,14 +273,14 @@ public class AddFeedFragment extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         btnPostFeed.setEnabled(true);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                     btnPostFeed.setEnabled(true);
                 }
             });

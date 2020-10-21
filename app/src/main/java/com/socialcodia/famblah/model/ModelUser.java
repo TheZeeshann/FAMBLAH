@@ -1,18 +1,18 @@
 package com.socialcodia.famblah.model;
 
 public class ModelUser {
-    private int id,feedsCount,friendsCount,friendshipStatus,verified;
+    private int id,feedsCount,friendsCount,friendshipStatus,status;
     String name,username,email,bio,image,token;
 
     public ModelUser() {
     }
 
-    public ModelUser(int id, int feedsCount, int friendsCount, int friendshipStatus, int verified, String name, String username, String email, String bio, String image, String token) {
+    public ModelUser(int id, int feedsCount, int friendsCount, int friendshipStatus, int status, String name, String username, String email, String bio, String image, String token) {
         this.id = id;
         this.feedsCount = feedsCount;
         this.friendsCount = friendsCount;
         this.friendshipStatus = friendshipStatus;
-        this.verified = verified;
+        this.status = status;
         this.name = name;
         this.username = username;
         this.email = email;
@@ -53,12 +53,12 @@ public class ModelUser {
         this.friendshipStatus = friendshipStatus;
     }
 
-    public int getVerified() {
-        return verified;
+    public int getStatus() {
+        return status;
     }
 
-    public void setVerified(int verified) {
-        this.verified = verified;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getName() {

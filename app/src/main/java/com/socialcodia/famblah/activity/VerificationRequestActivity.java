@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
@@ -132,7 +133,7 @@ public class VerificationRequestActivity extends AppCompatActivity {
         }
         if (filePath == null)
         {
-            Toast.makeText(this, "Select A Image", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(getApplicationContext(),"Select A Image",TastyToast.LENGTH_LONG, TastyToast.WARNING);
         }
         else
         {
@@ -175,18 +176,18 @@ public class VerificationRequestActivity extends AppCompatActivity {
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
-                            Toast.makeText(VerificationRequestActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             onBackPressed();
                         }
                         else
                         {
-                            Toast.makeText(VerificationRequestActivity.this, responseDefault.getMessage(), Toast.LENGTH_LONG).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         btnSubmit.setEnabled(true);
-                        Toast.makeText(VerificationRequestActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -194,7 +195,7 @@ public class VerificationRequestActivity extends AppCompatActivity {
                 public void onFailure(Call<ResponseDefault> call, Throwable t)
                 {
                     btnSubmit.setEnabled(true);
-                    Toast.makeText(VerificationRequestActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }

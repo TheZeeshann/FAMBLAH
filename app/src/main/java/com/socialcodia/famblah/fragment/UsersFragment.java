@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.activity.MainActivity;
 import com.socialcodia.famblah.adapter.AdapterUser;
@@ -57,7 +58,7 @@ public class UsersFragment extends Fragment {
         }
         catch (Exception e)
         {
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
 
         getUser();
@@ -81,12 +82,12 @@ public class UsersFragment extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getContext(), responseUsers.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),responseUsers.getMessage(),TastyToast.LENGTH_LONG, TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 

@@ -11,12 +11,23 @@
         android:id="@+id/miUsers"
         android:icon="@drawable/ic_baseline_group"
         android:orderInCategory="10"
+        android:enabled="true"
         android:title="Users"
         />
+
+    <item
+        android:id="@+id/miAddFeed"
+        android:icon="@drawable/ic_baseline_add_circle"
+        android:orderInCategory="10"
+        android:enabled="true"
+        android:title="Add Feed"
+        />
+
     <item
         android:id="@+id/miNotification"
         android:icon="@drawable/bell"
         android:orderInCategory="10"
+        android:enabled="true"
         android:title="Notifications"
         />
     <item

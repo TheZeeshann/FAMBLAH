@@ -10,8 +10,10 @@ import com.socialcodia.famblah.pojo.ResponseFriends;
 import com.socialcodia.famblah.pojo.ResponseLogin;
 import com.socialcodia.famblah.pojo.ResponseNotification;
 import com.socialcodia.famblah.pojo.ResponseNotificationsCount;
+import com.socialcodia.famblah.pojo.ResponseUpdate;
 import com.socialcodia.famblah.pojo.ResponseUser;
 import com.socialcodia.famblah.pojo.ResponseUsers;
+import com.socialcodia.famblah.pojo.ResponseVersion;
 import com.socialcodia.famblah.storage.Constants;
 
 import java.util.Map;
@@ -28,6 +30,14 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
+
+import static com.socialcodia.famblah.storage.Constants.MESSAGE;
+import static com.socialcodia.famblah.storage.Constants.NEW_PASSWORD;
+import static com.socialcodia.famblah.storage.Constants.PASSWORD;
+import static com.socialcodia.famblah.storage.Constants.USER_EMAIL;
+import static com.socialcodia.famblah.storage.Constants.USER_NAME;
+import static com.socialcodia.famblah.storage.Constants.USER_TOKEN;
+import static com.socialcodia.famblah.storage.Constants.USER_USERNAME;
 
 public interface Api
 {
@@ -67,26 +77,26 @@ public interface Api
     @FormUrlEncoded
     @POST("updatePassword")
     Call<ResponseDefault> updatePassword(
-            @Header("token") String token,
-            @Field("password") String password,
-            @Field("newpassword") String newPassword
+            @Header(USER_TOKEN) String token,
+            @Field(PASSWORD) String password,
+            @Field(NEW_PASSWORD) String newPassword
     );
 
     @FormUrlEncoded
     @POST("sendEmailVerfication")
     Call<ResponseDefault> sendEmailVerfication(
-            @Field("email") String email
+            @Field(USER_EMAIL) String email
     );
 
     @GET("feeds")
     Call<ResponseFeeds> getFeeds(
-            @Header("token") String token
+            @Header(USER_TOKEN) String token
     );
 
     @FormUrlEncoded
     @POST("feed/like")
     Call<ResponseFeed>  doLike(
-            @Header("token")  String token,
+            @Header(USER_TOKEN)  String token,
             @Field("feedId") int feedId
     );
 
@@ -107,21 +117,21 @@ public interface Api
     @FormUrlEncoded
     @POST("feed/unlike")
     Call<ResponseFeed> doDislike(
-            @Header("token") String token,
+            @Header(USER_TOKEN) String token,
             @Field("feedId") int feedId
     );
 
     @FormUrlEncoded
     @POST("feed/delete")
     Call<ResponseDefault> deleteFeed(
-            @Header("token") String token,
+            @Header(USER_TOKEN) String token,
             @Field("id") String feedId
     );
 
     @GET("user/{username}/feeds")
     Call<ResponseFeeds> getUserFeeds(
-            @Path("username") String username,
-            @Header("token") String token
+            @Path(USER_USERNAME) String username,
+            @Header(USER_TOKEN) String token
     );
 
     @FormUrlEncoded
@@ -146,6 +156,7 @@ public interface Api
     @POST("feed/post")
     Call<ResponseDefault> postFeed(
             @Header("token") String token,
+            @Field("feedPrivacy") int feedPrivacy,
             @Field("content") String content
     );
 
@@ -153,6 +164,7 @@ public interface Api
     @POST("feed/post")
     Call<ResponseDefault> postFeedWithImage(
             @Header("token") String token,
+            @Field("feedPrivacy") int feedPrivacy,
             @PartMap Map<String, RequestBody> map,
             @Part MultipartBody.Part file
     );
@@ -168,10 +180,24 @@ public interface Api
     @FormUrlEncoded
     @POST("/contacts/post")
     Call<ResponseDefault> postContactUs(
+            @Header(USER_TOKEN) String token,
+            @Field(USER_NAME) String name,
+            @Field(USER_EMAIL) String email,
+            @Field(MESSAGE) String message
+    );
+
+    @FormUrlEncoded
+    @POST("user/block")
+    Call<ResponseDefault> doBlock(
             @Header("token") String token,
-            @Field("name") String name,
-            @Field("email") String email,
-            @Field("message") String message
+            @Field("userId") int userId
+    );
+
+    @FormUrlEncoded
+    @POST("user/unblock")
+    Call<ResponseDefault> doUnblock(
+            @Header("token") String token,
+            @Field("userId") int userId
     );
 
     @Multipart
@@ -222,7 +248,6 @@ public interface Api
             @Path("id") String id
     );
 
-
     @FormUrlEncoded
     @POST("comment/post")
     Call<ResponseComment> postFeedComment(
@@ -241,6 +266,11 @@ public interface Api
     Call<ResponseFriends> getFriends(
             @Header("token") String token,
             @Path("username") String username
+    );
+
+    @GET("update/{version}")
+    Call<ResponseUpdate> checkUpdate(
+            @Path("version") String version
     );
 
     @FormUrlEncoded

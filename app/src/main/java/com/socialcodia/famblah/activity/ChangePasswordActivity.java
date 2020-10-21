@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
@@ -61,48 +62,55 @@ public class ChangePasswordActivity extends AppCompatActivity {
         String confirmPassword = inputConfirmPassword.getText().toString().trim();
         if (password.isEmpty())
         {
-            inputPassword.setError("Enter Password");
+            inputPassword.setError(getString(R.string.EP));
             inputPassword.requestFocus();
             return;
         }
         if (password.length()<7 || password.length()>30)
         {
-            inputPassword.setError("Password should be greater than 7 character");
+            inputPassword.setError(getString(R.string.PG7));
             inputPassword.requestFocus();
             return;
         }
         if (newPassword.isEmpty())
         {
-            inputNewPassword.setError("Enter New Password");
+            inputNewPassword.setError(getString(R.string.ENP));
             inputNewPassword.requestFocus();
             return;
         }
         if (newPassword.length()<7 || newPassword.length()>30)
         {
-            inputNewPassword.setError("Password should be greater than 7 character");
+            inputNewPassword.setError(getString(R.string.PG7));
             inputNewPassword.requestFocus();
             return;
         }
         if (confirmPassword.isEmpty())
         {
-            inputConfirmPassword.setError("Enter Confirm Password");
+            inputConfirmPassword.setError(getString(R.string.ECP));
             inputConfirmPassword.requestFocus();
             return;
         }
         if (confirmPassword.length()<7 || confirmPassword.length()>30)
         {
-            inputConfirmPassword.setError("Password should be greater than 7 character");
+            inputConfirmPassword.setError(getString(R.string.PG7));
             inputConfirmPassword.requestFocus();
             return;
         }
-        if (password==confirmPassword)
+        if (!newPassword.equals(confirmPassword))
         {
-            inputNewPassword.setError("Password Not Matched");
+            inputNewPassword.setError(getString(R.string.PNM));
             inputNewPassword.requestFocus();
-            inputConfirmPassword.setError("Password Not Matched");
+            inputConfirmPassword.setError(getString(R.string.PNM));
             inputConfirmPassword.requestFocus();
             inputConfirmPassword.setText("");
             inputNewPassword.setError("");
+            return;
+        }
+        if (password.equals(newPassword))
+        {
+            inputNewPassword.setError("You can't use your old password");
+            inputNewPassword.requestFocus();
+            inputNewPassword.setText("");
         }
         else
         {
@@ -114,7 +122,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     {
         if (Utils.isNetworkAvailable(getApplicationContext()))
         {
-            Toast.makeText(getApplicationContext(), "Please wait...", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(getApplicationContext(),"Please wait...",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
             btnUpdatePassword.setEnabled(false);
             ModelUser modelUser = sharedPrefHandler.getUser();
             Call<ResponseDefault> call = ApiClient.getInstance().getApi().updatePassword(modelUser.getToken(),password,newPassword);
@@ -130,14 +138,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     else
                     {
                         btnUpdatePassword.setEnabled(true);
-                        Toast.makeText(getApplicationContext(), "No Response From Server", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     btnUpdatePassword.setEnabled(true);
-                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }

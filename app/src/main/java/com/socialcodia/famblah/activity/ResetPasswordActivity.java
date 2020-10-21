@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.pojo.ResponseDefault;
@@ -34,19 +35,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         init();
         setIntentEmail();
 
-        btnResetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
+        btnResetPassword.setOnClickListener(v -> validateData());
         
-        tvLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendToLogin();
-            }
-        });
+        tvLogin.setOnClickListener(v -> sendToLogin());
     }
 
     private void setIntentEmail()
@@ -123,7 +114,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                         if (!responseDefault.getError())
                         {
                             btnResetPassword.setEnabled(true);
-                            Toast.makeText(ResetPasswordActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                             sendToLoginWithEmailAndPassword(email,password);
                         }
                         else
@@ -136,20 +127,20 @@ public class ResetPasswordActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                Toast.makeText(ResetPasswordActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                                TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                             }
                         }
                     }
                     else
                     {
-                        Toast.makeText(ResetPasswordActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     btnResetPassword.setEnabled(true);
-                    Toast.makeText(ResetPasswordActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/constraintLayout"
     android:background="@color/white"
     tools:context=".activity.LoginActivity">
 
@@ -27,9 +28,9 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="35dp"
         android:layout_height="35dp"
+        android:layout_marginLeft="121dp"
         android:layout_marginBottom="77dp"
         android:indeterminateTint="@color/white"
-        android:layout_marginLeft="121dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintEnd_toEndOf="@+id/imageView4"
         app:layout_constraintStart_toStartOf="@+id/imageView4"
@@ -39,42 +40,52 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="30dp"
         android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="26dp">
 
 
-        <EditText
-            android:id="@+id/inputEmail"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_person"
-            android:drawablePadding="20dp"
-            android:drawableTint="@color/blue"
+            android:layout_height="wrap_content"
             android:hint="Email or Username"
-            android:inputType="textEmailAddress"
-            android:padding="10dp"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:startIconTint="@color/blue"
+            app:startIconDrawable="@drawable/ic_baseline_person">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputEmail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textEmailAddress"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        <EditText
-            android:id="@+id/inputPassword"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_lock"
-            android:drawablePadding="20dp"
-            android:drawableTint="@color/blue"
             android:hint="Password"
-            android:inputType="textPassword"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:startIconTint="@color/blue"
+            app:endIconTint="@color/blue"
+            app:endIconMode="password_toggle"
+            app:startIconDrawable="@drawable/ic_baseline_lock">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPassword"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -87,9 +98,8 @@
                 android:id="@+id/tvForgotPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
                 android:gravity="right"
-                android:text="Forgot Password?"
+                android:text="@string/FORGOT_PASSWORD"
                 android:textColor="#2a2b87" />
         </LinearLayout>
 
@@ -98,13 +108,11 @@
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/btn_corner"
+            android:layout_marginTop="15dp"
             android:text="Login"
-            android:textColor="#2a2b87"
-            android:textSize="17dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="#ffffff"
             android:textStyle="bold" />
 
     </LinearLayout>

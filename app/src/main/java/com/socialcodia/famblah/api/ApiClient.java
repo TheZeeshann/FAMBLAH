@@ -1,10 +1,9 @@
 package com.socialcodia.famblah.api;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.socialcodia.famblah.MyApplication;
+import com.socialcodia.famblah.SocialCodia;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +20,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    private static final String BASE_URL_G = "http://111.111.111.111/SocialApiFriendsSystemVideo/public/";
+//    private static final String BASE_URL_G = "http://111.111.111.111/SocialApiFriendsSystemVideo/public/";
+    private static final String BASE_URL = "http://111.111.111.11/SocialApiFriendsSystemVideoThumb/public/";
+//    private static final String BASE_URL_G = "http://111.111.111.111/SocialApiFriendsSystemVideoThumb/public /";
+//    private static final String BASE_URL_G = "http://10.0.2.2/SocialApiFriendsSystemVideoThumb/public/";
+//private static final String BASE_URL = "http://famblah.cf/public/";
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
     public static final String HEADER_PRAGMA = "Pragma";
     private static final String TAG = "ServiceGenerator";
@@ -37,7 +40,7 @@ public class ApiClient {
                 .create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL_G)
+                .baseUrl(BASE_URL)
                 .client(okHttpClient())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -46,7 +49,8 @@ public class ApiClient {
     private static OkHttpClient okHttpClient(){
         return new OkHttpClient.Builder()
                 .cache(cache())
-                .addInterceptor(httpLoggingInterceptor()) // used if network off OR on
+                .addInterceptor(httpLoggingInterceptor()) //
+                // used if network off OR on
                 .addNetworkInterceptor(networkInterceptor()) // only used when network is on
                 .addInterceptor(offlineInterceptor())
                 .build();
@@ -54,7 +58,7 @@ public class ApiClient {
 
     private static Cache cache()
     {
-        return new Cache(new File(MyApplication.getInstance().getCacheDir(),"socialcodia"),CACHE_SIZE);
+        return new Cache(new File(SocialCodia.getInstance().getCacheDir(),"socialcodia"),CACHE_SIZE);
     }
 
     private static  HttpLoggingInterceptor httpLoggingInterceptor()
@@ -94,7 +98,7 @@ public class ApiClient {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
-                if (!MyApplication.isNetworkOk())
+                if (!SocialCodia.isNetworkOk())
                 {
                     CacheControl cacheControl = new CacheControl.Builder()
                             .maxStale(7,TimeUnit.DAYS)

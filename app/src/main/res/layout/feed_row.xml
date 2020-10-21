@@ -104,8 +104,8 @@
 
                 <VideoView
                     android:id="@+id/feedVideo"
-                    android:layout_width="fill_parent"
-                    android:layout_height="200dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
                     android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@+id/tvFeedContent" />
 

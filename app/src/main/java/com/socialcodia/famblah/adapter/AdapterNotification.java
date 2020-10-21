@@ -61,7 +61,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         }
         catch (Exception e)
         {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
         holder.tvNotificationText.setText(notificationText);
 

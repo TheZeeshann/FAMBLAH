@@ -28,8 +28,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.activity.EditFeedActivity;
 import com.socialcodia.famblah.activity.FeedActivity;
+import com.socialcodia.famblah.activity.FeedLikedUsersActivity;
 import com.socialcodia.famblah.activity.ProfileActivity;
 import com.socialcodia.famblah.model.ModelFeed;
 import com.socialcodia.famblah.R;
@@ -86,7 +88,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         String feedUserImage = feed.getUserImage();
         String feedUserId = feed.getUserId().toString();
         String feedVideoUrl = feed.getFeedVideo();
-        feedContent = feed.getFeedContent();
+        String feedContent = feed.getFeedContent();
         Boolean liked = feed.getLiked();
         holder.tvFeedLike.setText(likeCounts+" Likes");
         holder.tvFeedComment.setText(commentCounts+" Comments");
@@ -110,7 +112,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
                 }
                 catch (Exception e)
                 {
-                    Toast.makeText(context, "Image Error " +e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             }
             else
@@ -126,16 +128,23 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             }
         }
 
+        if (Integer.parseInt(likeCounts)>0)
+        {
+            holder.tvFeedLike.setOnClickListener(v -> {
+                sendToFeedLikedUserActivity();
+            });
+        }
+
         try {
             Picasso.get().load(feedUserImage).into(holder.feedUserImage);
         }
         catch (Exception e)
         {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
 
         try {
-            if (feed.getUserVerified()==0)
+            if (feed.getUserStatus()==0)
             {
                 holder.ivFeedImage.setVisibility(View.GONE);
             }
@@ -189,15 +198,21 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         holder.tvComment.setOnClickListener(v -> sendToFeedActivity(feedId));
 
         holder.tvShare.setOnClickListener(v -> {
-            if (feedImage.isEmpty())
-            {
-                shareFeed(feedContent);
-            }
-            else
+            if (feedType.equals("image"))
             {
                 shareFeedWithImage(holder,feedContent);
             }
+            else
+            {
+                shareFeed(feedContent);
+            }
         });
+    }
+
+    private void sendToFeedLikedUserActivity()
+    {
+        Intent intent = new Intent(context, FeedLikedUsersActivity.class);
+        context.startActivity(intent);
     }
 
     private void setFeedVideo(ViewHolder holder, String feedVideoUrl)
@@ -224,6 +239,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT,feedContent);
         intent.setType("text/plain");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(Intent.createChooser(intent,"Share Feed Content"));
     }
 
@@ -258,25 +274,24 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
                 if (response.isSuccessful())
                 {
-                    ResponseDefault ResponseDefault = response.body();
-                    if (!ResponseDefault.getError())
+                    ResponseDefault responseDefault = response.body();
+                    if (!responseDefault.getError())
                     {
-                        Toast.makeText(context, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                     }
                     else
                     {
-                        Toast.makeText(context, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
-
+                        TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
             @Override
             public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
             }
         });
     }
@@ -285,13 +300,13 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete");
-        builder.setMessage("Are you sure want to delete");
+        builder.setMessage(R.string.ARE_YOU_SURE_WANT_TO_DELETE);
         //Delete Button
         builder.setPositiveButton("Yes", (dialog, which) -> deleteFeed(feedId));
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show();
+                TastyToast.makeText(context,"Canceled",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                 dialog.dismiss();
             }
         });
@@ -302,16 +317,13 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
     private boolean showReportDialog(String feedId)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Report Feed");
-        builder.setMessage("Report this feed if you think this feed is violating our community guidelines, We will investigate and take action on your report ASAP.\nNote:  No one even you also can't seen who's reported this feed.");
+        builder.setTitle(R.string.REPORT_FEED);
+        builder.setMessage(R.string.REPORT_FEED_DESC);
         //Delete Button
         builder.setPositiveButton("Yes", (dialog, which) -> reportFeed(feedId));
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(context, "Report Cancel", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> {
+            TastyToast.makeText(context,"Report Cancel",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
+            dialog.dismiss();
         });
         builder.create().show();
         return true;
@@ -325,25 +337,24 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
                 if (response.isSuccessful())
                 {
-                   ResponseDefault ResponseDefault = response.body();
-                   if (!ResponseDefault.getError())
+                   ResponseDefault responseDefault = response.body();
+                   if (!responseDefault.getError())
                    {
-                       Toast.makeText(context, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                       TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                    }
                    else
                    {
-                       Toast.makeText(context, ResponseDefault.getMessage(), Toast.LENGTH_SHORT).show();
-
+                       TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                    }
                 }
                 else
                 {
-                    Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
             @Override
             public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
             }
         });
     }
@@ -366,14 +377,14 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
                 }
                 else
                 {
-                    Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(context,responseFeed.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
             @Override
             public void onFailure(Call<ResponseFeed> call, Throwable t) {
                 holder.tvUnlike.setVisibility(View.INVISIBLE);
                 holder.tvLike.setVisibility(View.VISIBLE);
-                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
             }
         });
     }
@@ -396,7 +407,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
                 }
                 else
                 {
-                    Toast.makeText(context, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(context,responseFeed.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 
@@ -428,6 +439,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
     {
         Intent intent = new Intent(context, ProfileActivity.class);
         intent.putExtra("IntentUsername",username);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -473,23 +485,20 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             popupMenu.getMenu().add(Menu.NONE,1,1,"Delete");
         }
         popupMenu.getMenu().add(Menu.NONE,2,2,"Report");
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-                if (id==0){
-                    sendToEditProfileActivity(feedId);
-                }
-                else if (id==1)
-                {
-                    showAlertDialog(feedId);
-                }
-                else if (id==2)
-                {
-                    showReportDialog(feedId);
-                }
-                return  false;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int id1 = item.getItemId();
+            if (id1 ==0){
+                sendToEditProfileActivity(feedId);
             }
+            else if (id1 ==1)
+            {
+                showAlertDialog(feedId);
+            }
+            else if (id1 ==2)
+            {
+                showReportDialog(feedId);
+            }
+            return  false;
         });
         popupMenu.show();
     }

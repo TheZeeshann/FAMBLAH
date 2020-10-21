@@ -10,86 +10,94 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_gravity="center_vertical"
         >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/userProfileImage"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/user"
             app:civ_border_color="@color/blue"
             app:civ_border_width="2dp"
             app:civ_circle_background_color="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <EditText
-            android:id="@+id/inputName"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_person"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/blue"
-            android:ems="10"
             android:hint="Enter Name"
-            android:inputType="textEmailAddress"
-            android:padding="13dp"
-            app:layout_constraintTop_toBottomOf="@+id/userProfileImage" />
+            android:layout_marginTop="16dp"
+            app:startIconDrawable="@drawable/ic_baseline_person"
+            app:startIconTint="@color/blue"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toBottomOf="@+id/userProfileImage"
+            >
 
-        <EditText
-            android:id="@+id/inputUsername"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_account_circle"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/blue"
-            android:ems="10"
+            android:layout_marginTop="10dp"
             android:hint="Username"
-            android:inputType="textEmailAddress"
-            android:padding="13dp"
-            app:layout_constraintTop_toBottomOf="@+id/inputName" />
+            app:startIconDrawable="@drawable/ic_baseline_account_circle"
+            app:startIconTint="@color/blue"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toBottomOf="@+id/inputName"
+            >
 
-        <EditText
-            android:id="@+id/inputBio"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textEmailAddress"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/text_bg_left"
-            android:drawableLeft="@drawable/ic_baseline_description"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/blue"
-            android:ems="10"
-            android:hint="Something About You."
-            android:inputType="textMultiLine"
-            android:padding="13dp"
-            app:layout_constraintTop_toBottomOf="@+id/inputUsername" />
+            android:layout_height="wrap_content"
+            android:hint="Something about you..."
+            android:layout_marginTop="10dp"
+            app:startIconDrawable="@drawable/ic_baseline_description"
+            app:startIconTint="@color/blue"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toBottomOf="@+id/inputUsername"
+            >
 
-        <android.widget.Button
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputBio"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:ems="10"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
             android:id="@+id/btnUpdateProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/btn_corner"
+            android:layout_marginTop="20dp"
             android:text="Update"
-            android:textColor="@color/blue"
-            android:textSize="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
     </LinearLayout>

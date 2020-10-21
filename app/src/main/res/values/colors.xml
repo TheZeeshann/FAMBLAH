@@ -4,8 +4,10 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="white">#ffffff</color>
-    <color name="blue">#2a2b87</color>
+<!--    <color name="blue">#2a2b87</color>-->
+    <color name="blue">#623fa0</color>
     <color name="black">#000000</color>
     <color name="colorRed">#ff1f04</color>
+    <color name="colorDarkRed">#BC0000</color>
     <color name="colorBlack">#000000</color>
 </resources>

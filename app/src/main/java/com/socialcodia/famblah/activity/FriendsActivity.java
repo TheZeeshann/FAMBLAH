@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.adapter.AdapterUser;
 import com.socialcodia.famblah.api.ApiClient;
@@ -106,15 +107,14 @@ public class FriendsActivity extends AppCompatActivity {
                         {
                             imgNoFriendsFound.setVisibility(View.VISIBLE);
                         }
-                        Toast.makeText(FriendsActivity.this, responseFriends.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),responseFriends.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(FriendsActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseFriends> call, Throwable t) {
                 t.printStackTrace();

@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.activity.EditProfileActivity;
 import com.socialcodia.famblah.activity.FriendsActivity;
@@ -89,7 +90,7 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
-        if (modelUser.getVerified()==0)
+        if (modelUser.getStatus()==0)
         {
             ivUserVerified.setVisibility(View.GONE);
         }
@@ -150,12 +151,12 @@ public class ProfileFragment extends Fragment {
                         }
                         else
                         {
-                            Toast.makeText(getContext(), responseUser.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getContext(),responseUser.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -190,12 +191,12 @@ public class ProfileFragment extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getContext(), responseFeeds.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),responseFeeds.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(getContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 

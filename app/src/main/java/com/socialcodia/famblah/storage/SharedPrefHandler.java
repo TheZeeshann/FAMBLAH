@@ -38,7 +38,7 @@ public class SharedPrefHandler {
         editor.putString(Constants.USER_TOKEN,user.getToken());
         editor.putInt(Constants.USER_FEEDS_COUNT,user.getFeedsCount());
         editor.putInt(Constants.USER_FRIENDS_COUNT,user.getFriendsCount());
-        editor.putInt(Constants.USER_VERIFIED,user.getVerified());
+        editor.putInt(Constants.USER_STATUS,user.getStatus());
         editor.apply();
     }
 
@@ -50,7 +50,7 @@ public class SharedPrefHandler {
                 sharedPreferences.getInt(Constants.USER_FEEDS_COUNT,0),
                 sharedPreferences.getInt(Constants.USER_FRIENDS_COUNT,0),
                 sharedPreferences.getInt(Constants.USER_FRIENDSHIP_STATUS,0),
-                sharedPreferences.getInt(Constants.USER_VERIFIED,0),
+                sharedPreferences.getInt(Constants.USER_STATUS,0),
                 sharedPreferences.getString(Constants.USER_NAME,null),
                 sharedPreferences.getString(Constants.USER_USERNAME,null),
                 sharedPreferences.getString(Constants.USER_EMAIL,null),

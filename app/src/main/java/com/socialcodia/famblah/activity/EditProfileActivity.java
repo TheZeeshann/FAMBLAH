@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
@@ -41,7 +43,7 @@ import retrofit2.Response;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    private EditText inputName, inputUsername, inputBio;
+    private TextInputEditText inputName, inputUsername, inputBio;
     private Button btnUpdateProfile;
     private ImageView userProfileImage;
     private ActionBar actionBar;
@@ -139,7 +141,7 @@ public class EditProfileActivity extends AppCompatActivity {
         bio = inputBio.getText().toString().trim();
         if (name.isEmpty())
         {
-            inputName.setError("Enter Name");
+            inputName.setError(getString(R.string.EN));
             inputName.requestFocus();
             return;
         }
@@ -151,7 +153,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
         if (username.isEmpty())
         {
-            inputUsername.setError("Enter Username");
+            inputUsername.setError(getString(R.string.EU));
             inputUsername.requestFocus();
             return;
         }
@@ -212,6 +214,7 @@ public class EditProfileActivity extends AppCompatActivity {
                             user.setName(name);
                             user.setToken(token);
                             SharedPrefHandler.getInstance(getApplicationContext()).saveUser(user);
+                            TastyToast.makeText(getApplicationContext(),"Profile Updated",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             onBackPressed();
                         }
                         else
@@ -223,19 +226,19 @@ public class EditProfileActivity extends AppCompatActivity {
                                 return;
                             }
                             btnUpdateProfile.setEnabled(true);
-                            Toast.makeText(EditProfileActivity.this, responseUser.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),response.body().getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         btnUpdateProfile.setEnabled(true);
-                        Toast.makeText(EditProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseUser> call, Throwable t) {
-
+                    t.printStackTrace();
                 }
             });
         }
@@ -256,7 +259,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         if (!responseUser.getError())
                         {
                             btnUpdateProfile.setEnabled(true);
-                            Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),"Profile Updated",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             ModelUser modelUser = new ModelUser();
                             modelUser.setName(name);
                             modelUser.setUsername(username);
@@ -274,20 +277,20 @@ public class EditProfileActivity extends AppCompatActivity {
                                 inputUsername.requestFocus();
                                 return;
                             }
-                            Toast.makeText(EditProfileActivity.this, responseUser.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseUser.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         btnUpdateProfile.setEnabled(true);
-                        Toast.makeText(EditProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseUser> call, Throwable t) {
                     btnUpdateProfile.setEnabled(true);
-                    Toast.makeText(EditProfileActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }

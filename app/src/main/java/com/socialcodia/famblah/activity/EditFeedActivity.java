@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelFeed;
@@ -86,17 +87,12 @@ public class EditFeedActivity extends AppCompatActivity {
         }
         else
         {
-            Toast.makeText(this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.SWW, Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
 
 
-        selectFeedImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseImage();
-            }
-        });
+        selectFeedImage.setOnClickListener(v -> chooseImage());
 
         inputContent.addTextChangedListener(new TextWatcher() {
             @Override
@@ -128,12 +124,7 @@ public class EditFeedActivity extends AppCompatActivity {
         tvFeedContent.setVisibility(View.GONE);
 //        ivFeedImage.setVisibility(View.GONE);
 
-        btnUpdateFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
+        btnUpdateFeed.setOnClickListener(v -> validateData());
 
         getFeed();
     }
@@ -166,7 +157,7 @@ public class EditFeedActivity extends AppCompatActivity {
         String content = inputContent.getText().toString().trim();
         if (content.length()<=0 && filePath==null)
         {
-            Toast.makeText(getApplicationContext(), "Please write something, or select an image", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(getApplicationContext(),"Please write something, or select an image",TastyToast.LENGTH_LONG,TastyToast.WARNING);
         }
         else if (filePath!=null)
         {
@@ -199,9 +190,13 @@ public class EditFeedActivity extends AppCompatActivity {
                         ResponseFeed responseFeed = response.body();
                         if (!responseFeed.getError())
                         {
+                            String feedImage = null;
                             ModelFeed modelFeed = responseFeed.getFeed();
                             String feedContent = modelFeed.getFeedContent();
-                            String feedImage = modelFeed.getFeedImage();
+                            String feedType = modelFeed.getFeedType();
+                            if (feedType.equals("image")) {
+                                feedImage = modelFeed.getFeedImage();
+                            }
                             String feedTimestamp = modelFeed.getFeedTimestamp();
                             String feedLikes = modelFeed.getFeedLikes().toString();
                             String feedComments = modelFeed.getFeedComments().toString();
@@ -213,22 +208,25 @@ public class EditFeedActivity extends AppCompatActivity {
                             tvFeedComment.setText(feedComments+" Comments");
 
 //                            Picasso.get().load(feedImage).into(ivFeedImage);
-
-                            if (!feedImage.isEmpty())
+                            
+                            if (feedType.equals("image"))
                             {
-                                try {
-                                    cardView.setVisibility(View.VISIBLE);
-                                    ivFeedImage.setVisibility(View.VISIBLE);
-                                    Picasso.get().load(feedImage).into(ivFeedImage);
-                                }
-                                catch (Exception e)
+                                if (!feedImage.isEmpty())
                                 {
-                                    Toast.makeText(EditFeedActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    try {
+                                        cardView.setVisibility(View.VISIBLE);
+                                        ivFeedImage.setVisibility(View.VISIBLE);
+                                        Picasso.get().load(feedImage).into(ivFeedImage);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Toast.makeText(EditFeedActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                ivFeedImage.setVisibility(View.GONE);
+                                else
+                                {
+                                    ivFeedImage.setVisibility(View.GONE);
+                                }
                             }
 
 //                            if (liked)
@@ -251,13 +249,13 @@ public class EditFeedActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(EditFeedActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseFeed> call, Throwable t) {
-                    Toast.makeText(EditFeedActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }
@@ -275,7 +273,7 @@ public class EditFeedActivity extends AppCompatActivity {
                 public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
                     if (response.isSuccessful())
                     {
-                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),response.body().getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         inputContent.setText("");
                         inputFeedImage.setImageBitmap(null);
                         btnUpdateFeed.setEnabled(true);
@@ -283,14 +281,14 @@ public class EditFeedActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         btnUpdateFeed.setEnabled(true);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                     btnUpdateFeed.setEnabled(true);
                 }
             });
@@ -308,7 +306,7 @@ public class EditFeedActivity extends AppCompatActivity {
         if (Utils.isNetworkAvailable(getApplicationContext()))
         {
             Map<String,RequestBody> map = new HashMap<>();
-            Toast.makeText(getApplicationContext(), "Updating...", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(getApplicationContext(),"Updating...",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
             btnUpdateFeed.setEnabled(false);
             String image = "";
             map.put("content",toRequestBody(content));
@@ -319,7 +317,7 @@ public class EditFeedActivity extends AppCompatActivity {
                 public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
                     if (response.isSuccessful())
                     {
-                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),response.body().getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         inputContent.setText("");
                         inputFeedImage.setImageBitmap(null);
                         btnUpdateFeed.setEnabled(true);
@@ -327,15 +325,15 @@ public class EditFeedActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         btnUpdateFeed.setEnabled(true);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                     btnUpdateFeed.setEnabled(true);
+                    t.printStackTrace();
                 }
             });
         }
@@ -382,7 +380,7 @@ public class EditFeedActivity extends AppCompatActivity {
             }
             catch (Exception e)
             {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                TastyToast.makeText(getApplicationContext(),e.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
             }
         }
     }

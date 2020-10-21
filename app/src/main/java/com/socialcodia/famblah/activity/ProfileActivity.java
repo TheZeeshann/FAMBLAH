@@ -1,12 +1,17 @@
 package com.socialcodia.famblah.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.adapter.AdapterFeed;
 import com.socialcodia.famblah.api.ApiClient;
@@ -37,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private TextView tvUserName,tvUserUsername,tvUserBio,tvFeedsCount,tvFriendsCount;
     private ImageView userProfileImage,ivUserVerified;
-    private Button btnAddFriend, btnUnFriend, btnCancelFriendRequest,btnAcceptFriendRequest,btnRejectFriendRequest;
+    private Button btnAddFriend, btnUnFriend, btnCancelFriendRequest,btnAcceptFriendRequest,btnRejectFriendRequest,btnUnblock;
 
     private RecyclerView recyclerView;
     List<ModelFeed> modelFeedList;
@@ -46,8 +52,10 @@ public class ProfileActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private LinearLayout layoutFriend;
 
-    String token,username,id, image;
-    int hisUserId;
+    String token,username,name,id, image;
+    int hisUserId,userStatus;
+    private boolean isVisible = true;
+    private Menu menu;
 
 
     @Override
@@ -96,6 +104,8 @@ public class ProfileActivity extends AppCompatActivity {
             rejectFriendRequest();
         });
 
+        btnUnblock.setOnClickListener(v->showUnblockAlert());
+
         userProfileImage.setOnClickListener(v -> {
             sendToZoomImage();
         });
@@ -132,6 +142,7 @@ public class ProfileActivity extends AppCompatActivity {
         btnCancelFriendRequest = findViewById(R.id.btnCancelFriendRequest);
         btnAcceptFriendRequest = findViewById(R.id.btnAcceptFriendRequest);
         btnRejectFriendRequest = findViewById(R.id.btnRejectFriendRequest);
+        btnUnblock = findViewById(R.id.btnUnblock);
         recyclerView = findViewById(R.id.feedRecyclerView);
         tvFeedsCount = findViewById(R.id.tvFeedsCount);
         ivUserVerified = findViewById(R.id.ivUserVerified);
@@ -152,6 +163,7 @@ public class ProfileActivity extends AppCompatActivity {
                         ResponseDefault responseDefault = response.body();
                         if (!responseDefault.getError())
                         {
+                            TastyToast.makeText(getApplicationContext(),"Friend Request Rejected",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                             btnRejectFriendRequest.setEnabled(true);
                             btnRejectFriendRequest.setVisibility(View.GONE);
                             btnAcceptFriendRequest.setVisibility(View.GONE);
@@ -160,13 +172,13 @@ public class ProfileActivity extends AppCompatActivity {
                         else
                         {
                             btnRejectFriendRequest.setEnabled(true);
-                            Toast.makeText(ProfileActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         btnRejectFriendRequest.setEnabled(true);
-                        Toast.makeText(ProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -197,17 +209,18 @@ public class ProfileActivity extends AppCompatActivity {
                             btnRejectFriendRequest.setVisibility(View.GONE);
                             btnAcceptFriendRequest.setVisibility(View.GONE);
                             btnUnFriend.setVisibility(View.VISIBLE);
+                            TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                         }
                         else
                         {
                             btnAcceptFriendRequest.setEnabled(true);
-                            Toast.makeText(ProfileActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         btnAcceptFriendRequest.setEnabled(true);
-                        Toast.makeText(ProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -241,13 +254,13 @@ public class ProfileActivity extends AppCompatActivity {
                         else
                         {
                             btnCancelFriendRequest.setEnabled(true);
-                            Toast.makeText(ProfileActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         }
                     }
                     else
                     {
                         btnCancelFriendRequest.setEnabled(true);
-                        Toast.makeText(ProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -277,17 +290,18 @@ public class ProfileActivity extends AppCompatActivity {
                             btnUnFriend.setEnabled(true);
                             btnUnFriend.setVisibility(View.GONE);
                             btnAddFriend.setVisibility(View.VISIBLE);
+                            TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.WARNING);
                         }
                         else
                         {
                             btnUnFriend.setEnabled(true);
-                            Toast.makeText(ProfileActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
                         }
                     }
                     else
                     {
                         btnUnFriend.setEnabled(true);
-                        Toast.makeText(ProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -317,16 +331,16 @@ public class ProfileActivity extends AppCompatActivity {
                             btnAddFriend.setEnabled(true);
                             btnAddFriend.setVisibility(View.GONE);
                             btnCancelFriendRequest.setVisibility(View.VISIBLE);
-                            Toast.makeText(ProfileActivity.this, "Friend Request Sent", Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(), "Friend Request Sent", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                         }
                         else
                         {
-                            Toast.makeText(ProfileActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(ProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(), String.valueOf(R.string.SNR),Toast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
@@ -357,16 +371,18 @@ public class ProfileActivity extends AppCompatActivity {
                     if (!responseUser.getError())
                     {
                         ModelUser modelUser = responseUser.getUser();
-                        String name = modelUser.getName();
+                        name = modelUser.getName();
                         hisUserId = modelUser.getId();
                         id = String.valueOf(modelUser.getId());
-                        String username = modelUser.getUsername();
+                        username = modelUser.getUsername();
                         String bio = modelUser.getBio();
                         image = modelUser.getImage();
+                        userStatus = modelUser.getStatus();
                         String feedCount = String.valueOf(modelUser.getFeedsCount());
                         String friendsCount = String.valueOf(modelUser.getFriendsCount());
                         int friendShipStatus = modelUser.getFriendshipStatus();
-                        int verified = modelUser.getVerified();
+                        int status = modelUser.getStatus();
+
 
                         tvUserName.setText(name);
                         tvUserUsername.setText("@"+username);
@@ -374,7 +390,7 @@ public class ProfileActivity extends AppCompatActivity {
                         tvFeedsCount.setText(feedCount);
                         tvFriendsCount.setText(friendsCount);
 
-                        if (verified==0)
+                        if (status==0)
                         {
                             ivUserVerified.setVisibility(View.GONE);
                         }
@@ -383,27 +399,35 @@ public class ProfileActivity extends AppCompatActivity {
                             ivUserVerified.setVisibility(View.VISIBLE);
                         }
 
-                        if (friendShipStatus==0)
+                        if (userStatus!=2)
                         {
-                            btnAddFriend.setVisibility(View.VISIBLE);
+                            isVisible = true;
+                            invalidateOptionsMenu();
+                            if (friendShipStatus==0)
+                            {
+                                btnAddFriend.setVisibility(View.VISIBLE);
+                            }
+                            else if (friendShipStatus==1)
+                            {
+                                btnAddFriend.setVisibility(View.GONE);
+                                btnUnFriend.setVisibility(View.VISIBLE);
+                            }
+                            else if (friendShipStatus==2)
+                            {
+                                btnAddFriend.setVisibility(View.GONE);
+                                btnCancelFriendRequest.setVisibility(View.VISIBLE);
+                            }
+                            else if (friendShipStatus==3)
+                            {
+                                btnAddFriend.setVisibility(View.GONE);
+                                btnUnFriend.setVisibility(View.GONE);
+                                btnAcceptFriendRequest.setVisibility(View.VISIBLE);
+                                btnRejectFriendRequest.setVisibility(View.VISIBLE);
+                            }
                         }
-                        else if (friendShipStatus==1)
-                        {
-                            btnAddFriend.setVisibility(View.GONE);
-                            btnUnFriend.setVisibility(View.VISIBLE);
-                        }
-                        else if (friendShipStatus==2)
-                        {
-                            btnAddFriend.setVisibility(View.GONE);
-                            btnCancelFriendRequest.setVisibility(View.VISIBLE);
-                        }
-                        else if (friendShipStatus==3)
-                        {
-                            btnAddFriend.setVisibility(View.GONE);
-                            btnUnFriend.setVisibility(View.GONE);
-                            btnAcceptFriendRequest.setVisibility(View.VISIBLE);
-                            btnRejectFriendRequest.setVisibility(View.VISIBLE);
-                        }
+                        else
+                            btnUnblock.setVisibility(View.VISIBLE);
+
                         try {
                             Picasso.get().load(image).placeholder(R.drawable.user).into(userProfileImage);
                         }
@@ -420,11 +444,108 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(ProfileActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
             @Override
             public void onFailure(Call<ResponseUser> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu,menu);
+        menu.findItem(R.id.miUserBlock).setVisible(isVisible);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch(id)
+        {
+            case R.id.miUserBlock:
+                showBlockAlert();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showBlockAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        builder.setTitle("Are you sure want to block?");
+        builder.setMessage(name+" will no longer be able to:\n\n\t○ See things you post on your timeline\n\t○ Add you as a friend\n\nIf you're friends, blocking "+name+" will also unfriend him");
+        builder.setPositiveButton("Block", (dialog, which) -> doBlock() );
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.create().show();
+    }
+ 
+    private void showUnblockAlert()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        builder.setTitle("Are you sure want to Unblock?");
+        builder.setMessage(name+" will be able to:\n\n\t○ See things you post on your timeline\n\t○ Add you as a friend");
+        builder.setPositiveButton("UnBlock", (dialog, which) -> doUnblock());
+        builder.setNegativeButton("Cancel", (dialog, which) ->doUnblock());
+        builder.create().show();
+    }
+
+    private void doBlock()
+    {
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().doBlock(token,hisUserId);
+        call.enqueue(new Callback<ResponseDefault>() {
+            @Override
+            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                if (response.isSuccessful())
+                {
+                    ResponseDefault responseDefault = response.body();
+                    if (!responseDefault.getError())
+                    {
+                        isVisible = false;
+                        invalidateOptionsMenu();
+                        btnAddFriend.setVisibility(View.GONE);
+                        btnAcceptFriendRequest.setVisibility(View.GONE);
+                        btnCancelFriendRequest.setVisibility(View.GONE);
+                        btnRejectFriendRequest.setVisibility(View.GONE);
+                        btnUnFriend.setVisibility(View.GONE);
+                        btnUnblock.setVisibility(View.VISIBLE);
+                    }
+                    else
+                        btnUnblock.setVisibility(View.GONE);
+                    TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void doUnblock()
+    {
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().doUnblock(token,hisUserId);
+        call.enqueue(new Callback<ResponseDefault>() {
+            @Override
+            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                if (response.isSuccessful())
+                {
+                    ResponseDefault responseDefault = response.body();
+                    if (!responseDefault.getError())
+                    {
+                        isVisible = true;
+                        invalidateOptionsMenu();
+                        btnUnblock.setVisibility(View.GONE);
+                        btnAddFriend.setVisibility(View.VISIBLE);
+                    }
+                    TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseDefault> call, Throwable t) {
                 t.printStackTrace();
             }
         });
@@ -442,17 +563,17 @@ public class ProfileActivity extends AppCompatActivity {
                     if (!responseFeeds.getError())
                     {
                         modelFeedList = responseFeeds.getFeeds();
-                        AdapterFeed adapterFeed = new AdapterFeed(modelFeedList,getApplicationContext());
+                        AdapterFeed adapterFeed = new AdapterFeed(modelFeedList,ProfileActivity.this);
                         recyclerView.setAdapter(adapterFeed);
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), responseFeeds.getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),responseFeeds.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "Server Not Responding", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
 

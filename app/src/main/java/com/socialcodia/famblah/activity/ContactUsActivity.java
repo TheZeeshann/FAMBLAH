@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
@@ -26,7 +28,7 @@ import retrofit2.Response;
 
 public class ContactUsActivity extends AppCompatActivity {
     private ActionBar actionBar;
-    private EditText inputName, inputEmail, inputMessage;
+    private TextInputEditText inputName, inputEmail, inputMessage;
     private Button btnSubmit;
     private ImageView btnWhatsapp, btnFacebook, btnInstagram,btnTwitter;
     private SharedPrefHandler sharedPrefHandler;
@@ -99,7 +101,7 @@ public class ContactUsActivity extends AppCompatActivity {
 
     private void whatsapp()
     {
-        String contact = "+91 9867503256";
+        String contact = getString(R.string.DEV_MOBILE);
         String url = "https://api.whatsapp.com/send?phone="+contact;
         try {
             PackageManager packageManager = getPackageManager();
@@ -110,7 +112,7 @@ public class ContactUsActivity extends AppCompatActivity {
         }
         catch (PackageManager.NameNotFoundException e)
         {
-            Toast.makeText(this, "Whatsapp not installed in your phone", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(getApplicationContext(),"Whatsapp not installed in your phone",TastyToast.LENGTH_LONG,TastyToast.ERROR);
         }
     }
 
@@ -124,25 +126,25 @@ public class ContactUsActivity extends AppCompatActivity {
 
         if (name.isEmpty())
         {
-            inputName.setError("Enter Name");
+            inputName.setError(getString(R.string.EN));
             inputName.requestFocus();
             return;
         }
         if (name.length()<3 || name.length()>40)
         {
-            inputName.setError("Enter Valid Name");
+            inputName.setError(getString(R.string.EVN));
             inputName.requestFocus();
             return;
         }
         if (email.isEmpty())
         {
-            inputEmail.setError("Enter Email");
+            inputEmail.setError(getString(R.string.EE));
             inputEmail.requestFocus();
             return;
         }
         if (email.length()<10 || email.length()>60 || !Patterns.EMAIL_ADDRESS.matcher(email).matches())
         {
-            inputEmail.setError("Enter Valid Email");
+            inputEmail.setError(getString(R.string.EVE));
             inputEmail.requestFocus();
         }
         else
@@ -167,23 +169,24 @@ public class ContactUsActivity extends AppCompatActivity {
                         if (!responseDefault.getError())
                         {
                             onBackPressed();
-                            Toast.makeText(ContactUsActivity.this, "Your information has been submitted", Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),"Your information has been submitted",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
+
                         }
                         else
                         {
-                            Toast.makeText(ContactUsActivity.this, responseDefault.getMessage(), Toast.LENGTH_SHORT).show();
+                            TastyToast.makeText(getApplicationContext(),responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                         }
                     }
                     else
                     {
-                        Toast.makeText(ContactUsActivity.this, "Server Not Responding", Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getApplicationContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseDefault> call, Throwable t) {
                     btnSubmit.setEnabled(true);
-                    Toast.makeText(ContactUsActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
                 }
             });
         }

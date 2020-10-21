@@ -4,17 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.FeedLikedUsersActivity">
 
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragmentContainer"/>
+        android:id="@+id/likesRecyclerView"
+        tools:listitem="@layout/row_user_like"/>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigationView"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/menu_nav" />
+        android:layout_height="match_parent"
+        android:id="@+id/imgNoFriendsFound"
+        android:visibility="gone"
+        android:src="@drawable/img_no_friends_found"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

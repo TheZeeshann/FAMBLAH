@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -61,70 +62,80 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="@+id/imageView6"
             tools:layout_editor_absoluteX="10dp">
 
-
-            <EditText
-                android:id="@+id/inputName"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/text_bg_left"
-                android:drawableLeft="@drawable/ic_baseline_person"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/blue"
-                android:ems="10"
+                app:startIconDrawable="@drawable/ic_baseline_person"
+                app:startIconTint="@color/blue"
                 android:hint="Enter Name"
-                android:inputType="textEmailAddress"
-                android:padding="13dp" />
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
 
-            <EditText
-                android:id="@+id/inputEmail"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:ems="10"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/text_bg_left"
-                android:drawableLeft="@drawable/ic_baseline_email"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/blue"
-                android:ems="10"
                 android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:padding="13dp" />
+                android:layout_marginTop="10dp"
+                app:startIconDrawable="@drawable/ic_baseline_email"
+                app:startIconTint="@color/blue"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textEmailAddress" />
 
-            <EditText
-                android:id="@+id/inputMessage"
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/text_bg_left"
-                android:drawableLeft="@drawable/ic_baseline_description"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/blue"
-                android:ems="10"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:hint="Enter message here"
-                android:inputType="textMultiLine"
-                android:padding="13dp" />
+                app:startIconDrawable="@drawable/ic_baseline_description"
+                app:startIconTint="@color/blue"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                >
 
-            <android.widget.Button
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:ems="10"
+                    android:inputType="textMultiLine"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+            <Button
                 android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/btn_corner"
                 android:text="Submit"
-                android:textColor="@color/blue"
-                android:textSize="16dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>
