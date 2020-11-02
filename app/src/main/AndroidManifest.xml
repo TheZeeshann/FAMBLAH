@@ -18,6 +18,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity android:name=".activity.FeedPrivacyActivity"></activity>
+        <activity android:name=".activity.DeleteAccountActivity" />
+        <activity android:name=".activity.BlockedUsersActivity" />
+        <activity android:name=".activity.AccountSettingActivity" />
         <activity android:name=".activity.FeedLikedUsersActivity" />
         <activity android:name=".activity.VideoPlayerActivity" />
         <activity android:name=".activity.FriendsActivity" />

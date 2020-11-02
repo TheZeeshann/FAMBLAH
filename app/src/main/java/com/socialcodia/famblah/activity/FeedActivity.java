@@ -62,7 +62,7 @@ import retrofit2.Response;
 public class FeedActivity extends AppCompatActivity {
 
     private TextView tvCommentUserName, tvCommentTimestamp, tvCommentContent, tvCommentLikesCount, btnCommentReply, tvFeedTimestamp, tvFeedContent, tvUserName, tvFeedLike, tvFeedComment, tvLike, tvUnlike, tvComment, tvShare;
-    private ImageView ivCommentUserProfileImage, ivCommentOption, btnCommentLike, btnAddComment, ivFeedOption, ivFeedImage, userProfileImage,feedUserImage,ivUserVerified;
+    private ImageView ivCommentUserProfileImage, ivCommentOption, btnCommentLike, btnAddComment, ivFeedOption, ivFeedImage, userProfileImage,feedUserImage,ivUserVerified,ivPublicIcon,ivFriendIcon,ivPrivateIcon;
     private EditText inputComment;
     private VideoView feedVideo;
     private ActionBar actionBar;
@@ -200,6 +200,9 @@ public class FeedActivity extends AppCompatActivity {
         inputComment = findViewById(R.id.inputComment);
         commentRecyclerView = findViewById(R.id.commentRecyclerView);
         ivUserVerified = findViewById(R.id.ivUserVerified);
+        ivPublicIcon = findViewById(R.id.ivPublicIcon);
+        ivFriendIcon = findViewById(R.id.ivFriendIcon);
+        ivPrivateIcon = findViewById(R.id.ivPrivateIcon);
         setTextViewDrawableColor(tvComment, R.color.colorRed);
     }
 
@@ -331,8 +334,28 @@ public class FeedActivity extends AppCompatActivity {
                         String feedLikes = modelFeed.getFeedLikes().toString();
                         String feedComments = modelFeed.getFeedComments().toString();
                         int status = modelFeed.getUserStatus();
+                        int feedPrivacy = modelFeed.getFeedPrivacy();
                         String feedType = modelFeed.getFeedType();
                         String feedVideoUrl = modelFeed.getFeedVideo();
+
+                        switch (feedPrivacy)
+                        {
+                            case 1:
+                                ivFriendIcon.setVisibility(View.GONE);
+                                ivPrivateIcon.setVisibility(View.GONE);
+                                ivPublicIcon.setVisibility(View.VISIBLE);
+                                break;
+                            case 2:
+                                ivPublicIcon.setVisibility(View.GONE);
+                                ivPrivateIcon.setVisibility(View.GONE);
+                                ivFriendIcon.setVisibility(View.VISIBLE);
+                                break;
+                            case 3:
+                                ivFriendIcon.setVisibility(View.GONE);
+                                ivPublicIcon.setVisibility(View.GONE);
+                                ivPrivateIcon.setVisibility(View.VISIBLE);
+                                break;
+                        }
 
                         if (feedType.equals("video"))
                         {

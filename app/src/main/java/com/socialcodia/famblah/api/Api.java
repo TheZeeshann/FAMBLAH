@@ -74,6 +74,17 @@ public interface Api
             @Header("token") String token
     );
 
+    @GET("users/block")
+    Call<ResponseUsers> getBlockedUser(
+            @Header("token") String token
+    );
+
+    @GET("feed/like/{feedId}/users")
+    Call<ResponseUsers> getLikedUsers(
+      @Header("token") String token,
+      @Path("feedId") int feedId
+    );
+
     @FormUrlEncoded
     @POST("updatePassword")
     Call<ResponseDefault> updatePassword(
@@ -235,6 +246,13 @@ public interface Api
     @GET("notifications/Count")
     Call<ResponseNotificationsCount> getNotificationsCount(
             @Header("token") String token
+    );
+
+    @FormUrlEncoded
+    @POST("notification/delete")
+    Call<ResponseDefault> deleteNotification(
+            @Header("token") String token,
+            @Field("notificationId") int notificationId
     );
 
     @GET("notifications/Seened")

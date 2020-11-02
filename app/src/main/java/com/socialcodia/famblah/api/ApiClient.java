@@ -21,10 +21,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 //    private static final String BASE_URL_G = "http://111.111.111.111/SocialApiFriendsSystemVideo/public/";
-    private static final String BASE_URL = "http://111.111.111.11/SocialApiFriendsSystemVideoThumb/public/";
-//    private static final String BASE_URL_G = "http://111.111.111.111/SocialApiFriendsSystemVideoThumb/public /";
-//    private static final String BASE_URL_G = "http://10.0.2.2/SocialApiFriendsSystemVideoThumb/public/";
-//private static final String BASE_URL = "http://famblah.cf/public/";
+//    private static final String BASE_URL = "http://111.111.111.11/SocialApiFriendsSystemVideoThumb/public/";
+//    private static final String BASE_URL_G = "http://111.111.111.111/SocialApiFriendsSystemVideoThumb/public/";
+    private static final String BASE_URL = "http://10.0.2.2/SocialApiFriendsSystemVideoThumbs/public/";
+//    private static final String BASE_URL = "http://famblah.cf/public/";
+//    private static final String BASE_URL = "http://socialcodia.com/famblah/public/";
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
     public static final String HEADER_PRAGMA = "Pragma";
     private static final String TAG = "ServiceGenerator";
@@ -75,43 +76,37 @@ public class ApiClient {
 
     private static Interceptor networkInterceptor()
     {
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Response response =chain.proceed(chain.request());
-                CacheControl cacheControl = new CacheControl.Builder()
-                        .maxAge(20, TimeUnit.SECONDS)
-                        .build();
+        return chain -> {
+            Response response =chain.proceed(chain.request());
+            CacheControl cacheControl = new CacheControl.Builder()
+                    .maxAge(2, TimeUnit.SECONDS)
+                    .build();
 
-                return response.newBuilder()
-                        .removeHeader(HEADER_PRAGMA)
-                        .removeHeader(HEADER_CACHE_CONTROL)
-                        .header(HEADER_CACHE_CONTROL,cacheControl.toString())
-                        .build();
-            }
+            return response.newBuilder()
+                    .removeHeader(HEADER_PRAGMA)
+                    .removeHeader(HEADER_CACHE_CONTROL)
+                    .header(HEADER_CACHE_CONTROL,cacheControl.toString())
+                    .build();
         };
     }
 
     public static Interceptor offlineInterceptor()
     {
-        return  new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                if (!SocialCodia.isNetworkOk())
-                {
-                    CacheControl cacheControl = new CacheControl.Builder()
-                            .maxStale(7,TimeUnit.DAYS)
-                            .build();
+        return chain -> {
+            Request request = chain.request();
+            if (!SocialCodia.isNetworkOk())
+            {
+                CacheControl cacheControl = new CacheControl.Builder()
+                        .maxStale(7,TimeUnit.DAYS)
+                        .build();
 
-                    request = request.newBuilder()
-                            .removeHeader(HEADER_PRAGMA)
-                            .removeHeader(HEADER_CACHE_CONTROL)
-                            .cacheControl(cacheControl)
-                            .build();
-                }
-                return  chain.proceed(request);
+                request = request.newBuilder()
+                        .removeHeader(HEADER_PRAGMA)
+                        .removeHeader(HEADER_CACHE_CONTROL)
+                        .cacheControl(cacheControl)
+                        .build();
             }
+            return  chain.proceed(request);
         };
     }
 

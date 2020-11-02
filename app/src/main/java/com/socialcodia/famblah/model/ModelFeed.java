@@ -2,11 +2,10 @@ package com.socialcodia.famblah.model;
 
 public class ModelFeed {
     String  userName,userUsername,userImage,feedImage,feedContent,feedVideo,feedThumbnail,feedType,feedTimestamp;
-    Integer userId,feedId,feedLikes,feedComments,userStatus;
+    Integer userId,feedId,feedLikes,feedComments,userStatus,feedPrivacy;
     Boolean liked;
 
-
-    public ModelFeed(String userName, String userUsername, String userImage, String feedImage, String feedContent, String feedVideo, String feedThumbnail, String feedType, String feedTimestamp, Integer userId, Integer feedId, Integer feedLikes, Integer feedComments, Integer userStatus, Boolean liked) {
+    public ModelFeed(String userName, String userUsername, String userImage, String feedImage, String feedContent, String feedVideo, String feedThumbnail, String feedType, String feedTimestamp, Integer userId, Integer feedId, Integer feedLikes, Integer feedComments, Integer userStatus, Integer feedPrivacy, Boolean liked) {
         this.userName = userName;
         this.userUsername = userUsername;
         this.userImage = userImage;
@@ -21,6 +20,7 @@ public class ModelFeed {
         this.feedLikes = feedLikes;
         this.feedComments = feedComments;
         this.userStatus = userStatus;
+        this.feedPrivacy = feedPrivacy;
         this.liked = liked;
     }
 
@@ -134,6 +134,14 @@ public class ModelFeed {
 
     public void setUserStatus(Integer userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public Integer getFeedPrivacy() {
+        return feedPrivacy;
+    }
+
+    public void setFeedPrivacy(Integer feedPrivacy) {
+        this.feedPrivacy = feedPrivacy;
     }
 
     public Boolean getLiked() {

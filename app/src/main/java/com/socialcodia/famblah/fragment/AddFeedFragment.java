@@ -56,8 +56,8 @@ import static android.app.Activity.RESULT_OK;
 public class AddFeedFragment extends Fragment {
 
     private EditText inputContent;
-    private ImageView selectFeedImage,selectFeedVideo,ivFeedImage,inputFeedImage,userProfileImage,feedUserImage;
-    private TextView tvFeedContent, tvUserName, tvFeedTimestamp;
+    private ImageView selectFeedImage,selectFeedVideo,ivFeedImage,inputFeedImage,userProfileImage,feedUserImage,ivUserVerified,ivUserVerifiedSocialCodia,ivPublicIcon,ivFriendIcon,ivPrivateIcon;
+    private TextView tvFeedContent, tvUserName,tvUserNameSocialCodia, tvFeedTimestamp;
     private Button btnPostFeed;
     private CardView cardView;
     private Bitmap bitmap;
@@ -80,8 +80,23 @@ public class AddFeedFragment extends Fragment {
         ModelUser modelUser = SharedPrefHandler.getInstance(getContext()).getUser();
         token = modelUser.getToken();
         tvUserName.setText(modelUser.getName());
+        tvUserNameSocialCodia.setText(modelUser.getName());
         Picasso.get().load(modelUser.getImage()).into(userProfileImage);
         Picasso.get().load(modelUser.getImage()).into(feedUserImage);
+
+        if (modelUser.getStatus()==1) {
+            ivUserVerified.setVisibility(View.VISIBLE);
+            ivUserVerifiedSocialCodia.setVisibility(View.VISIBLE);
+        }
+        else {
+            ivUserVerified.setVisibility(View.GONE);
+            ivUserVerifiedSocialCodia.setVisibility(View.GONE);
+        }
+
+
+        ivPrivateIcon.setVisibility(View.GONE);
+        ivFriendIcon.setVisibility(View.GONE);
+        ivPublicIcon.setVisibility(View.VISIBLE);
 
         privacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -91,12 +106,21 @@ public class AddFeedFragment extends Fragment {
                 {
                     case 0:
                         feedPrivacy = 1;
+                        ivPrivateIcon.setVisibility(View.GONE);
+                        ivFriendIcon.setVisibility(View.GONE);
+                        ivPublicIcon.setVisibility(View.VISIBLE);
                         break;
                     case 1:
                         feedPrivacy = 2;
+                        ivPrivateIcon.setVisibility(View.GONE);
+                        ivPublicIcon.setVisibility(View.GONE);
+                        ivFriendIcon.setVisibility(View.VISIBLE);
                         break;
                     case 2:
                         feedPrivacy = 3;
+                        ivPublicIcon.setVisibility(View.GONE);
+                        ivFriendIcon.setVisibility(View.GONE);
+                        ivPrivateIcon.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -123,15 +147,14 @@ public class AddFeedFragment extends Fragment {
                 {
                     cardView.setVisibility(View.VISIBLE);
                     tvFeedContent.setVisibility(View.VISIBLE);
+                    tvUserName.setVisibility(View.VISIBLE);
                     tvFeedContent.setText(s);
                 }
                 else
                 {
                     tvFeedContent.setText(null);
                     if (filePath==null)
-                    {
                         cardView.setVisibility(View.GONE);
-                    }
                 }
             }
 
@@ -161,10 +184,16 @@ public class AddFeedFragment extends Fragment {
         inputFeedImage = view.findViewById(R.id.inputFeedImage);
         btnPostFeed = view.findViewById(R.id.btnPostFeed);
         tvUserName = view.findViewById(R.id.tvUserName);
+        tvUserNameSocialCodia = view.findViewById(R.id.tvUserNameSocialCodia);
+        ivUserVerifiedSocialCodia = view.findViewById(R.id.ivUserVerifiedSocialCodia);
         tvFeedTimestamp = view.findViewById(R.id.tvFeedTimestamp);
         tvFeedContent = view.findViewById(R.id.tvFeedContent);
         userProfileImage = view.findViewById(R.id.userProfileImage);
         feedUserImage = view.findViewById(R.id.feedUserImage);
+        ivUserVerified = view.findViewById(R.id.ivUserVerified);
+        ivPublicIcon = view.findViewById(R.id.ivPublicIcon);
+        ivFriendIcon = view.findViewById(R.id.ivFriendIcon);
+        ivPrivateIcon = view.findViewById(R.id.ivPrivateIcon);
         cardView = view.findViewById(R.id.cardView);
         privacySpinner = view.findViewById(R.id.privacySpinner);
     }
@@ -172,10 +201,6 @@ public class AddFeedFragment extends Fragment {
     private void validateData()
     {
         String content = inputContent.getText().toString().trim();
-        if (content.length()!=0)
-        {
-            Toast.makeText(getContext(), content, Toast.LENGTH_SHORT).show();
-        }
         if (content.length()<=0 && filePath==null)
         {
             TastyToast.makeText(getContext(),"Can't post empty feed",TastyToast.LENGTH_LONG,TastyToast.WARNING);
@@ -219,7 +244,7 @@ public class AddFeedFragment extends Fragment {
                 public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
                     if (response.isSuccessful())
                     {
-                        Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        TastyToast.makeText(getContext(),response.body().getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         inputContent.setText("");
                         inputFeedImage.setImageBitmap(null);
                         btnPostFeed.setEnabled(true);

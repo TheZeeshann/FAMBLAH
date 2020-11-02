@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class UsersFragment extends Fragment {
     private String token;
     private List<ModelUser> modelUserList;
     private AdapterUser adapterUser;
+    private LinearLayout userLinearLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,13 +78,15 @@ public class UsersFragment extends Fragment {
                     ResponseUsers responseUsers = response.body();
                     if (!responseUsers.getError())
                     {
+                        userLinearLayout.setVisibility(View.GONE);
                         modelUserList = responseUsers.getUsers();
                         adapterUser = new AdapterUser(modelUserList,getContext());
                         userRecyclerView.setAdapter(adapterUser);
                     }
                     else
                     {
-                        TastyToast.makeText(getContext(),responseUsers.getMessage(),TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                        userLinearLayout.setVisibility(View.VISIBLE);
+                        //TastyToast.makeText(getContext(),responseUsers.getMessage(),TastyToast.LENGTH_LONG, TastyToast.ERROR);
                     }
                 }
                 else
@@ -121,5 +125,6 @@ public class UsersFragment extends Fragment {
     private void init(View view)
     {
         userRecyclerView = view.findViewById(R.id.usersRecyclerView);
+        userLinearLayout = view.findViewById(R.id.userLinearLayout);
     }
 }

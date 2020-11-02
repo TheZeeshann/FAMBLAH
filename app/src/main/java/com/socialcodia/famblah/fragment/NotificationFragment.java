@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.sdsmdg.tastytoast.TastyToast;
@@ -38,6 +39,7 @@ public class NotificationFragment extends Fragment {
     private SharedPrefHandler sharedPrefHandler;
     private String token;
     private List<ModelNotification> modelNotificationList;
+    private LinearLayout notificationLinearLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,6 +48,7 @@ public class NotificationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
         init(view);
 
+        notificationLinearLayout.setVisibility(View.GONE);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         notificationRecyclerView.setLayoutManager(layoutManager);
         setHasOptionsMenu(true);
@@ -65,13 +68,14 @@ public class NotificationFragment extends Fragment {
                     ResponseNotification responseNotification = response.body();
                     if (!responseNotification.getError())
                     {
+                        notificationLinearLayout.setVisibility(View.GONE);
                         modelNotificationList = responseNotification.getNotifications();
                         AdapterNotification adapterNotification = new AdapterNotification(getContext(),modelNotificationList);
                         notificationRecyclerView.setAdapter(adapterNotification);
                     }
                     else
                     {
-                        TastyToast.makeText(getContext(),responseNotification.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                        notificationLinearLayout.setVisibility(View.VISIBLE);
                     }
                 }
                 else
@@ -131,6 +135,7 @@ public class NotificationFragment extends Fragment {
     private void init(View view)
     {
         notificationRecyclerView = view.findViewById(R.id.notificationRecyclerView);
+        notificationLinearLayout = view.findViewById(R.id.notificationLinearLayout);
         sharedPrefHandler = SharedPrefHandler.getInstance(getContext());
         ModelUser user = sharedPrefHandler.getUser();
         token = user.getToken();

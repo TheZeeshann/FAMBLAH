@@ -28,7 +28,7 @@ import java.util.Set;
 public class SettingActivity extends AppCompatActivity {
 
     String[] settingList = {"Account","Change Password","Request Verification","Invite a friend","Logout","Contact Us","About Us"};
-    String[] settingDesList = {"Account setting, Update profile","Change your account Password","Request a Verification badge for your account","Invite your friend to FAMBLAH","Logout your account","Contact Us for any query","About our application"};
+    String[] settingDesList = {"Update profile, Blocked Users, Feed Privacy","Change your account Password","Request a Verification badge for your account","Invite your friend to FAMBLAH","Logout your account","Contact Us for any query","About our application"};
     int[] imageItem = {R.drawable.person,R.drawable.password,R.drawable.correct,R.drawable.group,R.drawable.logout,R.drawable.contact_us,R.drawable.info};
     ListView listView;
     ActionBar actionBar;
@@ -91,7 +91,7 @@ public class SettingActivity extends AppCompatActivity {
                 switch (settingList[position])
                 {
                     case "Account":
-                        sendToEditProfile();
+                        sendToAccountSetting();
                         break;
                     case "Change Password":
                         sendToChangePassword();
@@ -160,9 +160,9 @@ public class SettingActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void sendToEditProfile()
+    private void sendToAccountSetting()
     {
-        Intent intent = new Intent(getApplicationContext(),EditProfileActivity.class);
+        Intent intent = new Intent(getApplicationContext(),AccountSettingActivity.class);
         startActivity(intent);
     }
 

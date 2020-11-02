@@ -15,9 +15,13 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,9 +59,14 @@ public class EditFeedActivity extends AppCompatActivity {
     private Intent intent;
     private Bitmap bitmap;
     String token,feedId,feedUserId;
+    private int feedPrivacy;
     private SharedPrefHandler sharedPrefHandler;
     private Uri filePath;
     private ActionBar actionBar;
+    private Spinner privacySpinner;
+
+    String[] privacyType = {"Public","Friends","Only me"};
+    String[] privacyDesc = {"Anyone on FAMBLAH","Your friends on FAMBLAH","Only me"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +82,34 @@ public class EditFeedActivity extends AppCompatActivity {
         Picasso.get().load(modelUser.getImage()).into(userProfileImage);
         Picasso.get().load(modelUser.getImage()).into(feedUserImage);
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item,privacyType);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        privacySpinner.setAdapter(adapter);
         actionBar = getSupportActionBar();
         actionBar.setTitle("Update Feed");
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-
+        privacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i)
+                {
+                    case 0:
+                        feedPrivacy = 1;
+                        break;
+                    case 1:
+                        feedPrivacy = 2;
+                        break;
+                    case 2:
+                        feedPrivacy = 3;
+                        break;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
 
         intent = getIntent();
         if (intent.getStringExtra("intentFeedId")!=null)
@@ -144,6 +175,7 @@ public class EditFeedActivity extends AppCompatActivity {
         tvFeedLike = findViewById(R.id.tvFeedLike);
         tvFeedComment = findViewById(R.id.tvFeedComment);
         cardView = findViewById(R.id.cardView);
+        privacySpinner = findViewById(R.id.privacySpinner);
     }
 
     @Override

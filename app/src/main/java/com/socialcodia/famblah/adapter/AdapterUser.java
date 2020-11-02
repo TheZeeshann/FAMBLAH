@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
+import com.socialcodia.famblah.SocialCodia;
 import com.socialcodia.famblah.activity.ProfileActivity;
 import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelUser;
@@ -40,6 +41,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
     private List<ModelUser> modelUsersListAll;
     private Context context;
     private String token;
+//    private int hisUserId;
     private SharedPrefHandler sharedPrefHandler;
     private ModelUser mUser;
 
@@ -79,29 +81,36 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
             holder.ivUserVerified.setVisibility(View.VISIBLE);
         }
 
-        if (friendShipStatus==0)
+        if (status!=2)
         {
-            if (mUser.getId()!=user.getId())
+            if (friendShipStatus==0)
             {
-                holder.btnAddFriend.setVisibility(View.VISIBLE);
+                if (mUser.getId()!=user.getId())
+                {
+                    holder.btnAddFriend.setVisibility(View.VISIBLE);
+                }
+            }
+            else if (friendShipStatus==1)
+            {
+                holder.btnAddFriend.setVisibility(View.GONE);
+                holder.btnUnFriend.setVisibility(View.VISIBLE);
+            }
+            else if (friendShipStatus==2)
+            {
+                holder.btnAddFriend.setVisibility(View.GONE);
+                holder.btnCancelFriendRequest.setVisibility(View.VISIBLE);
+            }
+            else if (friendShipStatus==3)
+            {
+                holder.btnAddFriend.setVisibility(View.GONE);
+                holder.btnUnFriend.setVisibility(View.GONE);
+                holder.btnAcceptFriendRequest.setVisibility(View.VISIBLE);
+                holder.btnRejectFriendRequest.setVisibility(View.VISIBLE);
             }
         }
-        else if (friendShipStatus==1)
+        else
         {
-            holder.btnAddFriend.setVisibility(View.GONE);
-            holder.btnUnFriend.setVisibility(View.VISIBLE);
-        }
-        else if (friendShipStatus==2)
-        {
-            holder.btnAddFriend.setVisibility(View.GONE);
-            holder.btnCancelFriendRequest.setVisibility(View.VISIBLE);
-        }
-        else if (friendShipStatus==3)
-        {
-            holder.btnAddFriend.setVisibility(View.GONE);
-            holder.btnUnFriend.setVisibility(View.GONE);
-            holder.btnAcceptFriendRequest.setVisibility(View.VISIBLE);
-            holder.btnRejectFriendRequest.setVisibility(View.VISIBLE);
+            holder.btnUnblock.setVisibility(View.VISIBLE);
         }
 
         holder.tvUserName.setText(name);
@@ -130,6 +139,13 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
         holder.btnRejectFriendRequest.setOnClickListener(v-> rejectFriendRequestAlert(holder,hisUserId,name));
 
         holder.btnUnFriend.setOnClickListener(v-> unFriendAlert(holder,hisUserId,name));
+
+//        holder.btnUnblock.setOnClickListener(v->showUnblockAlert(holder,name,hisUserId));
+//        holder.btnBlock.setOnClickListener(v->showBlockAlert(holder,name,hisUserId));
+
+        holder.btnUnblock.setOnClickListener(v->doUnblock(holder,hisUserId));
+
+        holder.btnBlock.setOnClickListener(v->doBlock(holder,hisUserId));
 
     }
 
@@ -173,6 +189,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
     {
         Intent intent = new Intent(context, ProfileActivity.class);
         intent.putExtra("IntentUsername",username);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -222,7 +239,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
 
         private TextView tvUserName, tvUserEmail;
         private ImageView userProfileImage,ivUserVerified;
-        private Button btnAddFriend, btnUnFriend, btnCancelFriendRequest,btnAcceptFriendRequest,btnRejectFriendRequest;
+        private Button btnAddFriend, btnUnFriend, btnCancelFriendRequest,btnAcceptFriendRequest,btnRejectFriendRequest,btnUnblock,btnBlock;
         private ConstraintLayout userRowLayout;
 
         public ViewHolder(@NonNull View itemView) {
@@ -234,6 +251,8 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
             userRowLayout = itemView.findViewById(R.id.userRowLayout);
             btnAddFriend = itemView.findViewById(R.id.btnAddFriend);
             btnUnFriend = itemView.findViewById(R.id.btnUnFriend);
+            btnUnblock = itemView.findViewById(R.id.btnUnblock);
+            btnBlock = itemView.findViewById(R.id.btnBlock);
             btnCancelFriendRequest = itemView.findViewById(R.id.btnCancelFriendRequest);
             btnAcceptFriendRequest = itemView.findViewById(R.id.btnAcceptFriendRequest);
             btnRejectFriendRequest = itemView.findViewById(R.id.btnRejectFriendRequest);
@@ -406,6 +425,77 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
         }
     }
 
+//    private void showBlockAlert(ViewHolder holder,String name, int hisUserId) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setTitle("Are you sure want to block?");
+//        builder.setMessage(name+" will no longer be able to:\n\n\t○ See things you post on your timeline\n\t○ Add you as a friend\n\nIf you're friends, blocking "+name+" will also unfriend him");
+//        builder.setPositiveButton("Block", (dialog, which) -> doBlock(holder,hisUserId) );
+//        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+//        builder.create().show();
+//    }
+//
+//    private void showUnblockAlert(ViewHolder holder, String name,int hisUserId)
+//    {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this.context.getApplicationContext());
+//        builder.setTitle("Are you sure want to Unblock?");
+//        builder.setMessage(name+" will be able to:\n\n\t○ See things you post on your timeline\n\t○ Add you as a friend");
+//        builder.setPositiveButton("UnBlock", (dialog, which) -> doUnblock(holder,hisUserId));
+//        builder.setNegativeButton("Cancel", (dialog, which) ->dialog.dismiss());
+//        builder.create().show();
+//    }
+
+    private void doBlock(ViewHolder holder, int hisUserId)
+    {
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().doBlock(token, hisUserId);
+        call.enqueue(new Callback<ResponseDefault>() {
+            @Override
+            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                if (response.isSuccessful())
+                {
+                    ResponseDefault responseDefault = response.body();
+                    if (!responseDefault.getError())
+                    {
+                        holder.btnBlock.setVisibility(View.GONE);
+                        holder.btnUnblock.setVisibility(View.VISIBLE);
+                        TastyToast.makeText(context, responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                    }
+                    else
+                        TastyToast.makeText(context, responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void doUnblock(ViewHolder holder, int hisUserId)
+    {
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().doUnblock(token, hisUserId);
+        call.enqueue(new Callback<ResponseDefault>() {
+            @Override
+            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                if (response.isSuccessful())
+                {
+                    ResponseDefault responseDefault = response.body();
+                    if (!responseDefault.getError())
+                    {
+                        holder.btnUnblock.setVisibility(View.GONE);
+                        holder.btnBlock.setVisibility(View.VISIBLE);
+                        TastyToast.makeText(context, responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                    }
+                    else
+                        TastyToast.makeText(context, responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
     private void sendFriendRequest(ViewHolder holder, int hisUserId)
     {
         if (Utils.isNetworkAvailable(context))
@@ -423,7 +513,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.ViewHolder> im
                             holder.btnAddFriend.setEnabled(true);
                             holder.btnAddFriend.setVisibility(View.GONE);
                             holder.btnCancelFriendRequest.setVisibility(View.VISIBLE);
-                            TastyToast.makeText(context,"Friend Request Sent",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                            TastyToast.makeText(context,"Friend Request Sent",TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
                         }
                         else
                         {

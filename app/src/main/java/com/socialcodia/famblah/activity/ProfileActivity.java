@@ -54,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     String token,username,name,id, image;
     int hisUserId,userStatus;
-    private boolean isVisible = true;
+    private boolean isVisible = false;
     private Menu menu;
 
 
@@ -489,7 +489,7 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setTitle("Are you sure want to Unblock?");
         builder.setMessage(name+" will be able to:\n\n\t○ See things you post on your timeline\n\t○ Add you as a friend");
         builder.setPositiveButton("UnBlock", (dialog, which) -> doUnblock());
-        builder.setNegativeButton("Cancel", (dialog, which) ->doUnblock());
+        builder.setNegativeButton("Cancel", (dialog, which) ->dialog.dismiss());
         builder.create().show();
     }
 
@@ -512,10 +512,13 @@ public class ProfileActivity extends AppCompatActivity {
                         btnRejectFriendRequest.setVisibility(View.GONE);
                         btnUnFriend.setVisibility(View.GONE);
                         btnUnblock.setVisibility(View.VISIBLE);
+                        TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                     }
                     else
+                    {
                         btnUnblock.setVisibility(View.GONE);
-                    TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                        TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                    }
                 }
             }
             @Override
@@ -540,8 +543,10 @@ public class ProfileActivity extends AppCompatActivity {
                         invalidateOptionsMenu();
                         btnUnblock.setVisibility(View.GONE);
                         btnAddFriend.setVisibility(View.VISIBLE);
+                        TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                     }
-                    TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                    else
+                        TastyToast.makeText(getApplicationContext(), responseDefault.getMessage(), TastyToast.LENGTH_LONG, TastyToast.ERROR);
                 }
             }
             @Override

@@ -28,4 +28,6 @@ In this social networking application users can create free account and communic
     <string name="REPORT_FEED_DESC">Report this feed if you think this feed is violating our community guidelines, We will investigate and take action on your report ASAP.\nNote:  No one even you also can\'t seen who\'s reported this feed.</string>
     <string name="ARE_YOU_SURE_WANT_TO_DELETE">Are you sure want to delete</string>
     <string name="FORGOT_PASSWORD">Forgot Password?</string>
+    <string name="no_blocked_users">No blocked users</string>
+    <string name="block_desc">Blocked users will no longer be able to send you a friend request also can\'t see what you have posted.</string>
 </resources>

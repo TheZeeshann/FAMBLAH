@@ -1,6 +1,8 @@
 package com.socialcodia.famblah.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,23 +15,39 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.R;
 import com.socialcodia.famblah.activity.FeedActivity;
 import com.socialcodia.famblah.activity.ProfileActivity;
+import com.socialcodia.famblah.api.Api;
+import com.socialcodia.famblah.api.ApiClient;
 import com.socialcodia.famblah.model.ModelNotification;
+import com.socialcodia.famblah.model.ModelUser;
+import com.socialcodia.famblah.pojo.ResponseDefault;
+import com.socialcodia.famblah.storage.SharedPrefHandler;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdapterNotification extends RecyclerView.Adapter<AdapterNotification.ViewHolder> {
 
     private Context context;
     private List<ModelNotification> modelNotificationList;
+    private String token;
     private int count;
+    private SharedPrefHandler sp;
+    private ModelUser modelUser;
 
     public AdapterNotification(Context context, List<ModelNotification> modelNotificationList) {
         this.context = context;
         this.modelNotificationList = modelNotificationList;
+        this.sp = SharedPrefHandler.getInstance(context);
+        this.modelUser = sp.getUser();
+        this.token = modelUser.getToken();
     }
 
     @NonNull
@@ -44,6 +62,7 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         int modelListSize = modelNotificationList.size();
         ModelNotification notification = modelNotificationList.get(position);
         int notificationType = notification.getNotificationType();
+        int notificationId = notification.getNotificationId();
         String notificationText = notification.getNotificationText();
         int verified = notification.getUserVerified();
         holder.tvUserName.setText(notification.getUserName());
@@ -85,6 +104,11 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
             }
         });
 
+        holder.notificationConstraintLayout.setOnLongClickListener(view -> {
+            showDeleteNotificationAlert(notificationId);
+            return false;
+        });
+
     }
 
     @Override
@@ -104,6 +128,41 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         Intent intent = new Intent(context, FeedActivity.class);
         intent.putExtra("IntentFeedId",String.valueOf(feedId));
         context.startActivity(intent);
+    }
+
+    private void showDeleteNotificationAlert(int notificationId)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Delete Notification");
+        builder.setMessage("Are you sure want to delete this notification");
+        builder.setPositiveButton("Delete", (dialogInterface, i) -> deleteNotification(notificationId));
+        builder.setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss());
+        builder.create().show();
+    }
+
+    private void deleteNotification(int notificationId)
+    {
+        Call<ResponseDefault> call = ApiClient.getInstance().getApi().deleteNotification(token,notificationId);
+        call.enqueue(new Callback<ResponseDefault>() {
+            @Override
+            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                if (response.isSuccessful())
+                {
+                    ResponseDefault rd = response.body();
+                    if (!rd.getError())
+                        TastyToast.makeText(context,rd.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
+                    else
+                        TastyToast.makeText(context,rd.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                }
+                else
+                    TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder

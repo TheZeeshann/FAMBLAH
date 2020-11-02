@@ -29,6 +29,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sdsmdg.tastytoast.TastyToast;
+import com.socialcodia.famblah.SocialCodia;
 import com.socialcodia.famblah.activity.EditFeedActivity;
 import com.socialcodia.famblah.activity.FeedActivity;
 import com.socialcodia.famblah.activity.FeedLikedUsersActivity;
@@ -40,6 +41,7 @@ import com.socialcodia.famblah.pojo.ResponseDefault;
 import com.socialcodia.famblah.pojo.ResponseFeed;
 import com.socialcodia.famblah.storage.SharedPrefHandler;
 import com.socialcodia.famblah.fragment.ProfileFragment;
+import com.socialcodia.famblah.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -89,9 +91,30 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         String feedUserId = feed.getUserId().toString();
         String feedVideoUrl = feed.getFeedVideo();
         String feedContent = feed.getFeedContent();
+        int feedPrivacy = feed.getFeedPrivacy();
         Boolean liked = feed.getLiked();
         holder.tvFeedLike.setText(likeCounts+" Likes");
         holder.tvFeedComment.setText(commentCounts+" Comments");
+
+        switch (feedPrivacy)
+        {
+            case 1:
+                holder.ivFriendIcon.setVisibility(View.GONE);
+                holder.ivPrivateIcon.setVisibility(View.GONE);
+                holder.ivPublicIcon.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                holder.ivPublicIcon.setVisibility(View.GONE);
+                holder.ivPrivateIcon.setVisibility(View.GONE);
+                holder.ivFriendIcon.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                holder.ivPublicIcon.setVisibility(View.GONE);
+                holder.ivFriendIcon.setVisibility(View.GONE);
+                holder.ivPrivateIcon.setVisibility(View.VISIBLE);
+                break;
+        }
+
         if (liked)
         {
             holder.tvLike.setVisibility(View.INVISIBLE);
@@ -131,7 +154,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         if (Integer.parseInt(likeCounts)>0)
         {
             holder.tvFeedLike.setOnClickListener(v -> {
-                sendToFeedLikedUserActivity();
+                sendToFeedLikedUserActivity(feedId);
             });
         }
 
@@ -140,6 +163,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         }
         catch (Exception e)
         {
+            Picasso.get().load(R.drawable.user).into(holder.feedUserImage);
             e.printStackTrace();
         }
 
@@ -209,9 +233,10 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
         });
     }
 
-    private void sendToFeedLikedUserActivity()
+    private void sendToFeedLikedUserActivity(String feedId)
     {
         Intent intent = new Intent(context, FeedLikedUsersActivity.class);
+        intent.putExtra("intentFeedId",feedId);
         context.startActivity(intent);
     }
 
@@ -268,32 +293,35 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
 
     private void reportFeed(String feedId)
     {
-        Call<ResponseDefault> call = ApiClient.getInstance().getApi().reportFeed(SharedPrefHandler.getInstance(context).getUser().getToken(),Integer.valueOf(feedId));
-        call.enqueue(new Callback<ResponseDefault>() {
-            @Override
-            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
-                if (response.isSuccessful())
-                {
-                    ResponseDefault responseDefault = response.body();
-                    if (!responseDefault.getError())
+        if (Utils.isNetworkAvailable(context))
+        {
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().reportFeed(SharedPrefHandler.getInstance(context).getUser().getToken(),Integer.valueOf(feedId));
+            call.enqueue(new Callback<ResponseDefault>() {
+                @Override
+                public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                    if (response.isSuccessful())
                     {
-                        TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
+                        ResponseDefault responseDefault = response.body();
+                        if (!responseDefault.getError())
+                        {
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
+                        }
+                        else
+                        {
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                        }
                     }
                     else
                     {
-                        TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                     }
                 }
-                else
-                {
-                    TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                @Override
+                public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                    t.printStackTrace();
                 }
-            }
-            @Override
-            public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+            });
+        }
     }
 
     private boolean showAlertDialog(String feedId)
@@ -331,93 +359,102 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
 
     private void deleteFeed(String feedId)
     {
-        Call<ResponseDefault> call = ApiClient.getInstance().getApi().deleteFeed(SharedPrefHandler.getInstance(context).getUser().getToken(),feedId);
-        call.enqueue(new Callback<ResponseDefault>() {
-            @Override
-            public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
-                if (response.isSuccessful())
-                {
-                   ResponseDefault responseDefault = response.body();
-                   if (!responseDefault.getError())
-                   {
-                       TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
-                   }
-                   else
-                   {
-                       TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                   }
+        if (Utils.isNetworkAvailable(context))
+        {
+            Call<ResponseDefault> call = ApiClient.getInstance().getApi().deleteFeed(SharedPrefHandler.getInstance(context).getUser().getToken(),feedId);
+            call.enqueue(new Callback<ResponseDefault>() {
+                @Override
+                public void onResponse(Call<ResponseDefault> call, Response<ResponseDefault> response) {
+                    if (response.isSuccessful())
+                    {
+                        ResponseDefault responseDefault = response.body();
+                        if (!responseDefault.getError())
+                        {
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.SUCCESS);
+                        }
+                        else
+                        {
+                            TastyToast.makeText(context,responseDefault.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                        }
+                    }
+                    else
+                    {
+                        TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                    }
                 }
-                else
-                {
-                    TastyToast.makeText(context,String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                @Override
+                public void onFailure(Call<ResponseDefault> call, Throwable t) {
+                    t.printStackTrace();
                 }
-            }
-            @Override
-            public void onFailure(Call<ResponseDefault> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+            });
+        }
     }
 
     private void doLike(String feedId, String likeCounts,ViewHolder holder)
     {
-        int like = Integer.parseInt((likeCounts));
-        holder.tvLike.setVisibility(View.INVISIBLE);
-        holder.tvUnlike.setVisibility(View.VISIBLE);
-        String token = SharedPrefHandler.getInstance(context).getUser().getToken();
-        Call<ResponseFeed> call = ApiClient.getInstance().getApi().doLike(token,Integer.parseInt(feedId));
-        call.enqueue(new Callback<ResponseFeed>() {
-            @Override
-            public void onResponse(Call<ResponseFeed> call, Response<ResponseFeed> response) {
-                ResponseFeed responseFeed = response.body();
-                if (!responseFeed.getError())
-                {
-                    ModelFeed modelFeed = responseFeed.getFeed();
-                    holder.tvFeedLike.setText(modelFeed.getFeedLikes()+" Likes");
+        if (Utils.isNetworkAvailable(context))
+        {
+            int like = Integer.parseInt((likeCounts));
+            holder.tvLike.setVisibility(View.INVISIBLE);
+            holder.tvUnlike.setVisibility(View.VISIBLE);
+            String token = SharedPrefHandler.getInstance(context).getUser().getToken();
+            Call<ResponseFeed> call = ApiClient.getInstance().getApi().doLike(token,Integer.parseInt(feedId));
+            call.enqueue(new Callback<ResponseFeed>() {
+                @Override
+                public void onResponse(Call<ResponseFeed> call, Response<ResponseFeed> response) {
+                    ResponseFeed responseFeed = response.body();
+                    if (!responseFeed.getError())
+                    {
+                        ModelFeed modelFeed = responseFeed.getFeed();
+                        holder.tvFeedLike.setText(modelFeed.getFeedLikes()+" Likes");
+                    }
+                    else
+                    {
+                        TastyToast.makeText(context,responseFeed.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                    }
                 }
-                else
-                {
-                    TastyToast.makeText(context,responseFeed.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                @Override
+                public void onFailure(Call<ResponseFeed> call, Throwable t) {
+                    holder.tvUnlike.setVisibility(View.INVISIBLE);
+                    holder.tvLike.setVisibility(View.VISIBLE);
+                    t.printStackTrace();
                 }
-            }
-            @Override
-            public void onFailure(Call<ResponseFeed> call, Throwable t) {
-                holder.tvUnlike.setVisibility(View.INVISIBLE);
-                holder.tvLike.setVisibility(View.VISIBLE);
-                t.printStackTrace();
-            }
-        });
+            });
+        }
     }
 
     private void doDislike(String feedId, String likeCounts,ViewHolder holder)
     {
-        holder.tvUnlike.setVisibility(View.INVISIBLE);
-        holder.tvLike.setVisibility(View.VISIBLE);
-        int like = Integer.parseInt((likeCounts));
-        String token = SharedPrefHandler.getInstance(context).getUser().getToken();
-        Call<ResponseFeed> call = ApiClient.getInstance().getApi().doDislike(token,Integer.parseInt(feedId));
-        call.enqueue(new Callback<ResponseFeed>() {
-            @Override
-            public void onResponse(Call<ResponseFeed> call, Response<ResponseFeed> response) {
-                ResponseFeed responseFeed = response.body();
-                if (!responseFeed.getError())
-                {
-                    ModelFeed modelFeed = responseFeed.getFeed();
-                    holder.tvFeedLike.setText(modelFeed.getFeedLikes()+" Likes");
+        if (Utils.isNetworkAvailable(context))
+        {
+            holder.tvUnlike.setVisibility(View.INVISIBLE);
+            holder.tvLike.setVisibility(View.VISIBLE);
+            int like = Integer.parseInt((likeCounts));
+            String token = SharedPrefHandler.getInstance(context).getUser().getToken();
+            Call<ResponseFeed> call = ApiClient.getInstance().getApi().doDislike(token,Integer.parseInt(feedId));
+            call.enqueue(new Callback<ResponseFeed>() {
+                @Override
+                public void onResponse(Call<ResponseFeed> call, Response<ResponseFeed> response) {
+                    ResponseFeed responseFeed = response.body();
+                    if (!responseFeed.getError())
+                    {
+                        ModelFeed modelFeed = responseFeed.getFeed();
+                        holder.tvFeedLike.setText(modelFeed.getFeedLikes()+" Likes");
+                    }
+                    else
+                    {
+                        TastyToast.makeText(context,responseFeed.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
+                    }
                 }
-                else
-                {
-                    TastyToast.makeText(context,responseFeed.getMessage(),TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseFeed> call, Throwable t) {
-                holder.tvLike.setVisibility(View.INVISIBLE);
-                holder.tvUnlike.setVisibility(View.VISIBLE);
-                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseFeed> call, Throwable t) {
+                    holder.tvLike.setVisibility(View.INVISIBLE);
+                    holder.tvUnlike.setVisibility(View.VISIBLE);
+                    Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void sendToEditProfileActivity(String feedId)
@@ -511,7 +548,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder
     {
 
-        private ImageView feedUserImage,ivFeedImage,ivFeedOption,ivUserVerified;
+        private ImageView feedUserImage,ivFeedImage,ivFeedOption,ivUserVerified,ivPublicIcon,ivFriendIcon,ivPrivateIcon;
         private TextView tvUserName, tvFeedTimestamp,tvFeedContent,tvFeedLike,tvFeedComment,tvComment,tvLike,tvUnlike,tvShare;
         private VideoView feedVideo;
 
@@ -531,6 +568,9 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             tvUnlike = itemView.findViewById(R.id.tvUnlike);
             tvShare = itemView.findViewById(R.id.tvShare);
             ivUserVerified = itemView.findViewById(R.id.ivUserVerified);
+            ivPublicIcon = itemView.findViewById(R.id.ivPublicIcon);
+            ivFriendIcon = itemView.findViewById(R.id.ivFriendIcon);
+            ivPrivateIcon = itemView.findViewById(R.id.ivPrivateIcon);
 
         }
     }
