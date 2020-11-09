@@ -83,10 +83,9 @@ public class NotificationFragment extends Fragment {
                     TastyToast.makeText(getContext(),String.valueOf(R.string.SNR),TastyToast.LENGTH_LONG,TastyToast.ERROR);
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseNotification> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }

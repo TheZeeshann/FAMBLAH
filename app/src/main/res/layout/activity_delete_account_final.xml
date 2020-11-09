@@ -79,7 +79,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Current Password"
+            android:hint="Enter OTP"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
             app:layout_constraintBottom_toTopOf="@+id/btnCancel"
@@ -87,12 +87,14 @@
             app:startIconDrawable="@drawable/ic_baseline_lock"
             app:startIconTint="@color/blue"
             app:passwordToggleEnabled="true"
+            app:counterMaxLength="6"
             tools:layout_editor_absoluteX="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputPassword"
+                android:id="@+id/inputOtp"
                 android:layout_width="match_parent"
-                android:inputType="textPassword"
+                android:maxLength="6"
+                android:inputType="numberPassword"
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
