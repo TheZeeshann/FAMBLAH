@@ -38,49 +38,39 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="10dp">
 
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <EditText
+                android:id="@+id/inputUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/EU"
-                app:startIconTint="@color/blue"
-                app:startIconDrawable="@drawable/ic_baseline_account_circle">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/inputUsername"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="textEmailAddress"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/EN"
                 android:layout_marginTop="16dp"
-                app:startIconTint="@color/blue"
-                app:startIconDrawable="@drawable/ic_baseline_person">
+                android:background="@drawable/text_bg_left"
+                android:drawableLeft="@drawable/ic_baseline_account_circle"
+                android:drawablePadding="20dp"
+                android:drawableTint="@color/blue"
+                android:ems="10"
+                android:hint="Username"
+                android:inputType="textPersonName"
+                android:padding="10dp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/inputName"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="textEmailAddress"
-                    app:layout_constraintStart_toStartOf="parent" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            <EditText
+                android:id="@+id/inputName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/text_bg_left"
+                android:drawableLeft="@drawable/ic_baseline_person"
+                android:drawablePadding="20dp"
+                android:drawableTint="@color/blue"
+                android:ems="10"
+                android:hint="Name"
+                android:inputType="textPersonName"
+                android:padding="10dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -112,17 +102,19 @@
 
         </LinearLayout>
 
-        <Button
-            android:theme="@style/Widget.MaterialComponents.Button"
+        <android.widget.Button
             android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/btn_corner"
             android:text="Submit"
-            android:textColor="@color/white"
+            android:textColor="#2a2b87"
+            android:textSize="17dp"
             android:textStyle="bold"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout5"/>
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+            tools:layout_editor_absoluteX="10dp" />
     </LinearLayout>
 
 

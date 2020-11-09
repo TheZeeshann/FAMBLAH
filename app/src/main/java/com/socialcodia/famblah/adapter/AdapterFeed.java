@@ -521,8 +521,7 @@ public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.ViewHolder> {
             popupMenu.getMenu().add(Menu.NONE,0,0,"Edit");
             popupMenu.getMenu().add(Menu.NONE,1,1,"Delete");
         }
-        else
-            popupMenu.getMenu().add(Menu.NONE,2,2,"Report");
+        popupMenu.getMenu().add(Menu.NONE,2,2,"Report");
         popupMenu.setOnMenuItemClickListener(item -> {
             int id1 = item.getItemId();
             if (id1 ==0){

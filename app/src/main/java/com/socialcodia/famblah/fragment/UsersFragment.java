@@ -115,8 +115,7 @@ public class UsersFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (!modelUserList.isEmpty())
-                    adapterUser.getFilter().filter(newText);
+                adapterUser.getFilter().filter(newText);
                 return false;
             }
         });

@@ -231,8 +231,6 @@
                 android:drawableTint="@color/blue"
                 android:gravity="right"
                 android:padding="8dp"
-                android:clickable="true"
-                android:background="?attr/selectableItemBackground"
                 android:text=" Share"
                 android:textColor="@color/blue"
                 android:textSize="15dp"

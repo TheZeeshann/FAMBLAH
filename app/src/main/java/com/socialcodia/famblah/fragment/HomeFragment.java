@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -106,25 +104,6 @@ public class HomeFragment extends Fragment {
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         menu.findItem(R.id.miSearch).setVisible(false);
         menu.findItem(R.id.miSettings).setVisible(false);
-        menu.findItem(R.id.miPostFeed).setVisible(false);
         super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.home_menu,menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id)
-        {
-            case R.id.miFeedSettings:
-                Toast.makeText(getContext(), "Feed Setting", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
