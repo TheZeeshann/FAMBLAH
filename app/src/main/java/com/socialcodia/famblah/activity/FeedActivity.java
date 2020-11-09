@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,9 +33,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.socialcodia.famblah.adapter.AdapterFeed;
 import com.socialcodia.famblah.fragment.AddFeedFragment;
+import com.socialcodia.famblah.fragment.ProfileFragment;
 import com.socialcodia.famblah.pojo.ResponseComment;
 import com.socialcodia.famblah.pojo.ResponseDefault;
 import com.socialcodia.famblah.R;
@@ -62,12 +65,18 @@ import retrofit2.Response;
 public class FeedActivity extends AppCompatActivity {
 
     private TextView tvCommentUserName, tvCommentTimestamp, tvCommentContent, tvCommentLikesCount, btnCommentReply, tvFeedTimestamp, tvFeedContent, tvUserName, tvFeedLike, tvFeedComment, tvLike, tvUnlike, tvComment, tvShare;
-    private ImageView ivCommentUserProfileImage, ivCommentOption, btnCommentLike, btnAddComment, ivFeedOption, ivFeedImage, userProfileImage,feedUserImage,ivUserVerified,ivPublicIcon,ivFriendIcon,ivPrivateIcon;
+    private ImageView ivCommentUserProfileImage, ivCommentOption, btnCommentLike, ivFeedOption, ivFeedImage, userProfileImage,feedUserImage,ivUserVerified,ivPublicIcon,ivFriendIcon,ivPrivateIcon;
     private EditText inputComment;
+    private FloatingActionButton btnAddComment;
     private VideoView feedVideo;
     private ActionBar actionBar;
     private Intent intent;
+    private String feedType,userUsername;
+    private static final String TEXT = "text";
+    private static final String IMAGE = "image";
+    private static final String VIDEO = "video";
     private List<ModelComment> modelCommentList;
+    private SharedPrefHandler sp;
     AdapterComment adapterComment;
     ModelUser modelUser;
 
@@ -93,7 +102,7 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         commentRecyclerView.setLayoutManager(layoutManager);
 
-        modelUser = SharedPrefHandler.getInstance(getApplicationContext()).getUser();
+        modelUser = sp.getUser();
         token = modelUser.getToken();
         userId = String.valueOf(modelUser.getId());
 
@@ -103,6 +112,9 @@ public class FeedActivity extends AppCompatActivity {
             feedId = intent.getStringExtra("IntentFeedId");
         }
 
+        getFeed();
+        getComments();
+
         btnAddComment.setOnClickListener(v -> validateData());
 
         ivFeedOption.setOnClickListener(v -> showFeedActionOption(ivFeedOption,feedId,feedUserId));
@@ -111,15 +123,41 @@ public class FeedActivity extends AppCompatActivity {
 
         tvUnlike.setOnClickListener(v -> doUnlike(feedId));
 
-        tvShare.setOnClickListener(v -> shareFeedWithImage(feedContent));
-
-        tvShare.setOnClickListener(v-> {});
-
         ivFeedImage.setOnClickListener(v->sendToZoomImage());
 
-        getFeed();
-        getComments();
+        tvShare.setOnClickListener(v->{
+            shareFeedHandler(feedType,feedContent);
+        });
 
+    }
+
+    private void sendToProfileFragment()
+    {
+        ProfileFragment fragment = new ProfileFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.fragmentContainer,fragment).commit();
+    }
+
+    private void sendToProfile()
+    {
+        Intent intent = new Intent(getApplicationContext(),ProfileActivity.class);
+        intent.putExtra("IntentUsername",userUsername);
+        startActivity(intent);
+    }
+
+    private void shareFeedHandler(String feedType, String feedContent)
+    {
+        switch (feedType)
+        {
+            case TEXT:
+                shareFeed(feedContent);
+                break;
+            case IMAGE:
+                shareFeedWithImage(feedContent);
+                break;
+            case VIDEO:
+                TastyToast.makeText(getApplicationContext(),"Feature Will Be Come Soon...",TastyToast.LENGTH_LONG,TastyToast.INFO);
+        }
     }
 
     public void shareFeedWithImage(String feedContent)
@@ -204,6 +242,7 @@ public class FeedActivity extends AppCompatActivity {
         ivFriendIcon = findViewById(R.id.ivFriendIcon);
         ivPrivateIcon = findViewById(R.id.ivPrivateIcon);
         setTextViewDrawableColor(tvComment, R.color.colorRed);
+        sp = SharedPrefHandler.getInstance(getApplicationContext());
     }
 
     private void getComments()
@@ -233,6 +272,15 @@ public class FeedActivity extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+    public void shareFeed(String feedContent)
+    {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT,feedContent);
+        intent.setType("text/plain");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(Intent.createChooser(intent,"Share Feed Content"));
     }
 
     private void sendToZoomImage()
@@ -328,6 +376,7 @@ public class FeedActivity extends AppCompatActivity {
                         image = modelFeed.getFeedImage();
                         String feedTimestamp = modelFeed.getFeedTimestamp();
                         feedUserId = modelFeed.getUserId().toString();
+                        userUsername = modelFeed.getUserUsername();
                         String userName = modelFeed.getUserName();
                         String userImage = modelFeed.getUserImage();
                         Boolean liked = modelFeed.getLiked();
@@ -335,8 +384,14 @@ public class FeedActivity extends AppCompatActivity {
                         String feedComments = modelFeed.getFeedComments().toString();
                         int status = modelFeed.getUserStatus();
                         int feedPrivacy = modelFeed.getFeedPrivacy();
-                        String feedType = modelFeed.getFeedType();
+                        feedType = modelFeed.getFeedType();
                         String feedVideoUrl = modelFeed.getFeedVideo();
+
+                        if(Integer.parseInt(userId)!=Integer.parseInt(feedUserId))
+                        {
+                            feedUserImage.setOnClickListener(v->{ sendToProfile(); });
+                            tvUserName.setOnClickListener(v->sendToProfile());
+                        }
 
                         switch (feedPrivacy)
                         {
@@ -375,6 +430,9 @@ public class FeedActivity extends AppCompatActivity {
                             if (!feedImage.isEmpty())
                             {
                                 try {
+                                    tvShare.setOnClickListener(view -> {
+                                        shareFeedWithImage(feedContent);
+                                    });
                                     Picasso.get().load(feedImage).into(ivFeedImage);
                                 }
                                 catch (Exception e)
@@ -385,6 +443,9 @@ public class FeedActivity extends AppCompatActivity {
                             else
                             {
                                 ivFeedImage.setVisibility(View.GONE);
+                                tvShare.setOnClickListener(v->{
+                                    Toast.makeText(FeedActivity.this, "CLicked", Toast.LENGTH_SHORT).show();
+                                    shareFeed(feedContent);});
                             }
                         }
 
@@ -457,17 +518,25 @@ public class FeedActivity extends AppCompatActivity {
         PopupMenu popupMenu = new PopupMenu(getApplicationContext(),ivFeedOption);
         if (feedUserId.equals(userId))
         {
-            popupMenu.getMenu().add(Menu.NONE,1,1,"Delete");
+            popupMenu.getMenu().add(Menu.NONE,1,1,"Edit");
+            popupMenu.getMenu().add(Menu.NONE,2,2,"Delete");
         }
-        popupMenu.getMenu().add(Menu.NONE,2,2,"Report");
+        else
+        {
+            popupMenu.getMenu().add(Menu.NONE,3,3,"Report");
+        }
         popupMenu.setOnMenuItemClickListener(item -> {
 
             int id = item.getItemId();
             if (id==1)
             {
-                deleteFeedAlert(feedId);
+                sendToEditFeed(feedId);
             }
             else if (id==2)
+            {
+                deleteFeedAlert(feedId);
+            }
+            else if (id==3)
             {
                 reportFeedAlert(feedId);
             }
@@ -475,6 +544,13 @@ public class FeedActivity extends AppCompatActivity {
             return false;
         });
         popupMenu.show();
+    }
+
+    private void sendToEditFeed(String feedId)
+    {
+        Intent intent = new Intent(getApplicationContext(),EditFeedActivity.class);
+        intent.putExtra("intentFeedId",feedId);
+        startActivity(intent);
     }
 
     private void reportFeedAlert(String feedId)

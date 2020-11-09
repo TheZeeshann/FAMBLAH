@@ -58,11 +58,11 @@ public interface Api
     );
 
     @FormUrlEncoded
-    @POST("forgotPassword")
+    @POST("password/forgot")
     Call<ResponseDefault> forgotPassword(@Field(Constants.USER_EMAIL) String email);
 
     @FormUrlEncoded
-    @POST("resetPassword")
+    @POST("password/reset")
     Call<ResponseDefault> resetPassword(
             @Field(Constants.USER_EMAIL) String email,
             @Field("otp") String otp,
@@ -86,7 +86,7 @@ public interface Api
     );
 
     @FormUrlEncoded
-    @POST("updatePassword")
+    @POST("password/update")
     Call<ResponseDefault> updatePassword(
             @Header(USER_TOKEN) String token,
             @Field(PASSWORD) String password,
@@ -138,6 +138,22 @@ public interface Api
             @Header(USER_TOKEN) String token,
             @Field("id") String feedId
     );
+
+    @FormUrlEncoded
+    @POST("account/delete/request")
+    Call<ResponseDefault> deleteAccountRequest(
+        @Header("token") String token,
+        @Field("password") String password
+        );
+
+
+    @FormUrlEncoded
+    @POST("account/delete")
+    Call<ResponseDefault> deleteAccount(
+            @Header("token") String token,
+            @Field("password") String otp
+    );
+
 
     @GET("user/{username}/feeds")
     Call<ResponseFeeds> getUserFeeds(

@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activity.FeedPrivacyActivity"></activity>
+        <activity android:name=".activity.DeleteAccountFinalActivity"></activity>
+        <activity android:name=".activity.FeedPrivacyActivity" />
         <activity android:name=".activity.DeleteAccountActivity" />
         <activity android:name=".activity.BlockedUsersActivity" />
         <activity android:name=".activity.AccountSettingActivity" />

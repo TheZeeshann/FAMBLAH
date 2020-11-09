@@ -140,8 +140,6 @@ public class SettingActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(intent,"choose one"));
     }
 
-
-
     private void sendToChangePassword()
     {
         Intent intent = new Intent(getApplicationContext(),ChangePasswordActivity.class);
